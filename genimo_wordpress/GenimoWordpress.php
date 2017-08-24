@@ -1,14 +1,5 @@
 <?php
 
-include_once('../wp-config.php');
-//Database configuration
-DB::$user = DB_USER;
-DB::$password = DB_PASSWORD;
-DB::$dbName = DB_NAME;
-DB::$host = DB_HOST;
-DB::$port = '3306';
-DB::$error_handler = 'my_error_handler';
-
 /**
  *   @Class for integrate GENIMO ERP With Wordpress Wp-casa;
  *   @Copyright @morettic.com.br
@@ -35,7 +26,7 @@ class GenimoWordpress extends stdClass {
         //
         $obj = json_decode($json); //var_dump($obj);die();
         //dum memnory
-        var_dump($obj);
+        // var_dump($obj);
         // die;
         //Id property
         $idProperty = $obj->property->idProperty;
@@ -140,7 +131,9 @@ class GenimoWordpress extends stdClass {
         //var_dump($types);
 
         DB::disconnect();
-        return null;
+        //Internal property id on Wordpress
+        $obj->idPropertyDB = $idPropertyDB;
+        return $obj;
     }
 
     /**
@@ -245,13 +238,16 @@ class GenimoWordpress extends stdClass {
       ]
      */
     public static function insertCatCat($id, $idPropertyDB) {
-        switch ($id) {
+        echo "---$id----";
+        echo "$idPropertyDB-----";
+        $pid = intval($id);
+        switch ($pid) {
             case 1:
-                GenimoWordpress::insertTaxionomy("catCasa", "Imovel do tipo casa", $idPropertyDB, 'listing-type', "Casa");
+                GenimoWordpress::insertTaxionomy("catCasa", "Casa", $idPropertyDB, 'listing-type', "Casa");
                 echo "CASA";
                 break;
             case 2:
-                GenimoWordpress::insertTaxionomy("catApto", "Imovel do tipo apartamento", $idPropertyDB, 'listing-type', "Apartamento");
+                GenimoWordpress::insertTaxionomy("catApto", "Apartamento", $idPropertyDB, 'listing-type', "Apartamento");
                 echo "APTO";
                 break;
             case 3:
@@ -275,6 +271,8 @@ class GenimoWordpress extends stdClass {
                 echo "Cobertura";
                 break;
         }
+
+        echo "\n";
     }
 
     /**
@@ -307,7 +305,7 @@ class GenimoWordpress extends stdClass {
                 'taxonomy' => $taxionomy,
                 'description' => $desc,
                 'parent' => '0',
-                'count' => '0'
+                'count' => '1'
             ));
             //id term created
             $term_tax_id = DB::insertId();
@@ -376,10 +374,130 @@ class GenimoWordpress extends stdClass {
      *      
      */
     public static function copyImages($property) {
-        /**
+        DB::debugMode();
+        echo $property->idPropertyDB . "\n";
 
-         * 
-         *          */
+        $images = $property->property->images;
+        var_dump($images);
+
+        $hasSpot = false;
+        $imgIds = [];
+        foreach ($images as $img) {
+
+            $path = PATH_UPLOAD . date('Y') . '/' . date("m") . '/' . $img->nmFileName;
+            //echo $path . "\n";
+            //if (!file_exists($path)) {
+
+            $urlImg = $img->dsImagePath . "/" . $img->nmFileName;
+            echo $urlImg . "\n";
+
+
+
+
+            $file = file_get_contents($urlImg);
+            $url = REST_MEDIA_URL;
+            $ch = curl_init();
+            $username = 'robogenimo';
+            $password = 'robogenimo2017@';
+
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $file);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                'Content-Disposition: form-data; filename="'.$img->nmFileName.'"',
+                'Authorization: Basic ' . base64_encode($username . ':' . $password),
+            ]);
+            $result = curl_exec($ch);
+            curl_close($ch);
+            echo $result;
+
+            
+
+            //  if (copy($urlImg, $path)) {
+            //      echo "COPIED\n";
+            //    echo "INSERT<br>";
+            //Get Date
+            /*  $guid = BASE_IMAGES . date('Y').'/'.date("m") .'/'. $img->nmFileName;
+              $date = date("Y-m-d H:i:s");
+              //Não existe o post nem a meta key
+              DB::insert('wp_posts', array(
+              'post_author' => 1, //default for all
+              'post_date' => $date, //Just now its new
+              'post_date_gmt' => $date, //just now its new
+              'post_content' => ($property->property->nmPropertySite), //Get as String UTF 8
+              'post_title' => ($property->property->nmPropertySite), //Get as String UTF 8
+              'post_name' => $img->nmFileName, //Get as String UTF 8
+              'post_excerpt' => ($property->property->nmPropertySite), //Default Empty
+              'post_status' => 'publish', //Publish online / Trash offline
+              'comment_status' => 'closed', //Comment closed for all default
+              'ping_status' => 'closed', //Ping status closed default for all
+              'post_password' => '', //Post password empty
+              'to_ping' => '', //No need for it
+              'pinged' => '', //No need for it
+              'post_modified' => $date, //Just now
+              'post_modified_gmt' => $date, //Just now
+              'post_content_filtered' => '', //No need for
+              'post_parent' => $property->idPropertyDB, //Parent one
+              'guid' => $guid, //Guid Url for Property
+              'menu_order' => '0', //Default no need
+              'post_type' => "attachment", //Post type listing for all property
+              'post_mime_type' => "image/jpeg", //Default no need
+              'comment_count' => '0'                                          //Default no need
+              ));
+              //Get new Property Key from database
+              $imgId = DB::insertId();
+              $imgIds[] = $imgId; */
+            //
+            //Insert image into Gallery
+            /* DB::insert('wp_postmeta', array(
+              'post_id' => $imgId, //primary key
+              'meta_key' => '_thumbnail_id',
+              'meta_value' => RELATIVE_PT . $img->nmFileName
+              ));
+              $idMetaPostAttacht = DB::insertId(); */
+            /*  DB::insert('wp_postmeta', array(
+              'post_id' => $imgId, //primary key
+              'meta_key' => '_wp_attached_file',
+              'meta_value' => 'a:5:{s:5:"width";i:1920;s:6:"height";i:1080;s:4:"file";s:28:"' . RELATIVE_PT . date('Y').'/'.date("m") .'/'. $img->nmFileName . '";s:5:"sizes";a:5:{s:9:"thumbnail";a:4:{s:4:"file";s:28:"' . $img->nmFileName . '";s:5:"width";i:150;s:6:"height";i:150;s:9:"mime-type";s:10:"image/jpeg";}s:6:"medium";a:4:{s:4:"file";s:28:"' . $img->nmFileName . '";s:5:"width";i:300;s:6:"height";i:169;s:9:"mime-type";s:10:"image/jpeg";}s:12:"medium_large";a:4:{s:4:"file";s:28:"' . $img->nmFileName . '";s:5:"width";i:768;s:6:"height";i:432;s:9:"mime-type";s:10:"image/jpeg";}s:5:"large";a:4:{s:4:"file";s:29:"' . $img->nmFileName . '";s:5:"width";i:1024;s:6:"height";i:576;s:9:"mime-type";s:10:"image/jpeg";}s:32:"twentyseventeen-thumbnail-avatar";a:4:{s:4:"file";s:28:"' . $img->nmFileName . '";s:5:"width";i:100;s:6:"height";i:100;s:9:"mime-type";s:10:"image/jpeg";}}s:10:"image_meta";a:12:{s:8:"aperture";s:1:"0";s:6:"credit";s:0:"";s:6:"camera";s:0:"";s:7:"caption";s:0:"";s:17:"created_timestamp";s:1:"0";s:9:"copyright";s:0:"";s:12:"focal_length";s:1:"0";s:3:"iso";s:1:"0";s:13:"shutter_speed";s:1:"0";s:5:"title";s:0:"";s:11:"orientation";s:1:"0";s:8:"keywords";a:0:{}}}'
+              ));
+              $idMetaPostAttacht_file = DB::insertId();
+              /**
+             * Img Spotlight
+             */
+            /*  if ($img->flSpotlight === "1") {
+              $hasSpot = true;
+              GenimoWordpress::insertSpotLight($property->idPropertyDB, $imgId);
+              echo "HAS SPOTLIIGHT\n";
+              } */
+            //   echo "\n";
+            //} else {
+            //    echo "ERROR\n";
+            // }
+            //} else {
+            //    echo "EXISTS\n";
+            // }
+            // }
+            // var_dump($imgIds);
+            //Default Spotlight
+            //  if (!$hasSpot) {
+            //      GenimoWordpress::insertSpotLight($property->idPropertyDB, $imgIds[0]);
+            //  }
+            /**
+
+             * 
+             *          */
+            //copy('http://www.google.co.in/intl/en_com/images/srpr/logo1w.png', PATH_UPLOAD.'file.jpeg');
+        }
+    }
+
+    public static function insertSpotLight($idProperty, $idImg) {
+        DB::insert('wp_postmeta', array(
+            'post_id' => $idProperty, //default for all
+            'meta_key' => '_thumbnail_id', //Just now its new
+            'meta_value' => $idImg                                      //Default no need
+        ));
+
+        return DB::insertId();
     }
 
     /**
