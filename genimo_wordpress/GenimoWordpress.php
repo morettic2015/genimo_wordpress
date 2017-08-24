@@ -397,8 +397,8 @@ class GenimoWordpress extends stdClass {
             $file = file_get_contents($urlImg);
             $url = REST_MEDIA_URL;
             $ch = curl_init();
-            $username = 'robogenimo';
-            $password = 'robogenimo2017@';
+            $username = 'xxxxxx';
+            $password = 'xxxxxx';
 
             curl_setopt($ch, CURLOPT_URL, $url);
             curl_setopt($ch, CURLOPT_POST, 1);
