@@ -4,7 +4,11 @@
  *   @Class for integrate GENIMO ERP With Wordpress Wp-casa;
  *   @Copyright @morettic.com.br
  * 
- * 
+ * delete FROM imobiliaria_com.wp_postmeta where meta_key in ('_listing_id','_listing_not_available','_listing_sticky','_listing_featured','_map_address','_price','_price_period'
+  ,'_listing_title','_gallery_imported','_listing_featured'
+  ,'_price_offer','_geolocation_lat','_geolocation_long','_geolocation_formatted_address','_geolocation_street','_geolocation_state_short','_geolocation_state_long',
+  '_geolocation_country_short','_geolocation_country_long','_geolocated','_details_1','_details_2','_details_3','_details_4','_details_5','_details_6','_details_7','_details_8'
+  );
  * 
  * 
  */
@@ -26,12 +30,14 @@ class GenimoWordpress extends stdClass {
         //
         $obj = json_decode($json); //var_dump($obj);die();
         //dum memnory
-        // var_dump($obj);
-        // die;
+        //var_dump($obj);
+        //die;
         //Id property
         $idProperty = $obj->property->idProperty;
         //Recupera meta key com o IdProperty
-        $metaKeyIdProperty = DB::queryOneColumn('meta_value', "select * from wp_postmeta where meta_key = '_listing_id' and meta_value = '" . $idProperty . "'");
+        $metaKeyIdProperty = DB::queryOneColumn('post_id', "select * from wp_postmeta where meta_key = '_listing_id' and meta_value = '" . $idProperty . "'");
+        print_r($metaKeyIdProperty);
+
         //Post title
         $postTitle = $obj->property->nmCategory . ", " . $obj->property->nmNeighborhood;
         //Address
@@ -43,6 +49,7 @@ class GenimoWordpress extends stdClass {
         $dtBakerStyle = "a:1:{s:5:\"style\";s:1:\"0\";}";
         //Se idProperty for = -1 não existe a metaKey
         $idPropertyDB = empty($metaKeyIdProperty) ? $metaKeyIdProperty : 0;
+        $obj->idPropertyDB = $idPropertyDB;
         //Get Guid URL
         $guid = GenimoWordpress::cleanUrl($idPropertyDB);
         //Listing not found
@@ -119,12 +126,23 @@ class GenimoWordpress extends stdClass {
             //Get type of business and values for rent and sale
             //$typeOfBusiness = getTypeOfBusiness($obj->property);
             DB::insert('wp_postmeta', $metadata);
+            //Insert Listing Location
+            $tax = utf8_decode($obj->property->nmNeighborhood . "," . $obj->property->nmCity);
+            $taxSlug = makeSlug($tax);
 
+            echo "\n" . $taxSlug . "\n";
+            GenimoWordpress::insertTaxionomy($taxSlug, $tax, $idPropertyDB, 'location', $tax);
 
+            //new ID
+            $obj->idPropertyDB = $idPropertyDB;
 
             // DB::commit();
         } else {
             echo "UPDATE<br>";
+            //Old ID
+            $obj->idPropertyDB = $metaKeyIdProperty[0];
+
+            echo $obj->idPropertyDB;
             //Post e meta key existem
         }
 
@@ -132,7 +150,7 @@ class GenimoWordpress extends stdClass {
 
         DB::disconnect();
         //Internal property id on Wordpress
-        $obj->idPropertyDB = $idPropertyDB;
+
         return $obj;
     }
 
@@ -282,7 +300,7 @@ class GenimoWordpress extends stdClass {
         //echo "TXBS";
         $term_id = DB::queryOneField('term_id', "select term_id from wp_terms where slug=%s", $slug);
 
-        //echo $term_id;die();
+        //echo $term_id; //die();
 
         $term_tax_id;
         //Term is empty insert it    
@@ -312,8 +330,10 @@ class GenimoWordpress extends stdClass {
             // echo "\nTERM TAXIONOMY ID".$term_id;
         }
         //Retrieve taxionomy from term to associate with post
-        if (empty($term_tax_id)) {
+        if (!isset($term_tax_id)) {
+
             $term_tax_id = DB::queryOneField('term_taxonomy_id', 'SELECT term_taxonomy_id FROM imobiliaria_com.wp_term_taxonomy where term_id = ' . $term_id);
+            //echo $term_tax_id;
         }
         //Query One Field to see if theres already a relationship
         $term_rel_id = DB::queryOneField(
@@ -375,10 +395,10 @@ class GenimoWordpress extends stdClass {
      */
     public static function copyImages($property) {
         DB::debugMode();
-        echo $property->idPropertyDB . "\n";
+        //echo $property->idPropertyDB . "\n";
 
         $images = $property->property->images;
-        var_dump($images);
+        //var_dump($images);
 
         $hasSpot = false;
         $imgIds = [];
@@ -387,106 +407,56 @@ class GenimoWordpress extends stdClass {
             $path = PATH_UPLOAD . date('Y') . '/' . date("m") . '/' . $img->nmFileName;
             //echo $path . "\n";
             //if (!file_exists($path)) {
+            //verify if file exists if exists skip continue
+            DB::query("SELECT ID FROM wp_posts where post_type = 'attachment' and guid like '%" . $img->nmFileName . "%'");
+            $counter = DB::count();
+
+            //echo "\n Image Occurences:" . $counter;
+
+            if ($counter > 0) {
+                ///echo "\n";
+                //echo $img->nmFileName . ' Exists\n';
+                continue;
+            }
 
             $urlImg = $img->dsImagePath . "/" . $img->nmFileName;
-            echo $urlImg . "\n";
-
-
-
+            //echo $urlImg . "\n";
 
             $file = file_get_contents($urlImg);
             $url = REST_MEDIA_URL;
             $ch = curl_init();
-            $username = 'xxxxxx';
-            $password = 'xxxxxx';
+            $username = 'robogenimo';
+            $password = 'robogenimo2017@';
 
             curl_setopt($ch, CURLOPT_URL, $url);
             curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $file);
             curl_setopt($ch, CURLOPT_HTTPHEADER, [
-                'Content-Disposition: form-data; filename="'.$img->nmFileName.'"',
+                'Accept: application/json',
+                'Content-Disposition: form-data; filename="' . $img->nmFileName . '"',
                 'Authorization: Basic ' . base64_encode($username . ':' . $password),
+                    //'Content-Type: application/json',
+                    //'Accept: application/json'
             ]);
+            $result = null;
             $result = curl_exec($ch);
             curl_close($ch);
-            echo $result;
+            // echo "\n----------------------------------------";
+            $imagem = json_decode($result);
 
-            
-
-            //  if (copy($urlImg, $path)) {
-            //      echo "COPIED\n";
-            //    echo "INSERT<br>";
-            //Get Date
-            /*  $guid = BASE_IMAGES . date('Y').'/'.date("m") .'/'. $img->nmFileName;
-              $date = date("Y-m-d H:i:s");
-              //Não existe o post nem a meta key
-              DB::insert('wp_posts', array(
-              'post_author' => 1, //default for all
-              'post_date' => $date, //Just now its new
-              'post_date_gmt' => $date, //just now its new
-              'post_content' => ($property->property->nmPropertySite), //Get as String UTF 8
-              'post_title' => ($property->property->nmPropertySite), //Get as String UTF 8
-              'post_name' => $img->nmFileName, //Get as String UTF 8
-              'post_excerpt' => ($property->property->nmPropertySite), //Default Empty
-              'post_status' => 'publish', //Publish online / Trash offline
-              'comment_status' => 'closed', //Comment closed for all default
-              'ping_status' => 'closed', //Ping status closed default for all
-              'post_password' => '', //Post password empty
-              'to_ping' => '', //No need for it
-              'pinged' => '', //No need for it
-              'post_modified' => $date, //Just now
-              'post_modified_gmt' => $date, //Just now
-              'post_content_filtered' => '', //No need for
-              'post_parent' => $property->idPropertyDB, //Parent one
-              'guid' => $guid, //Guid Url for Property
-              'menu_order' => '0', //Default no need
-              'post_type' => "attachment", //Post type listing for all property
-              'post_mime_type' => "image/jpeg", //Default no need
-              'comment_count' => '0'                                          //Default no need
-              ));
-              //Get new Property Key from database
-              $imgId = DB::insertId();
-              $imgIds[] = $imgId; */
-            //
-            //Insert image into Gallery
-            /* DB::insert('wp_postmeta', array(
-              'post_id' => $imgId, //primary key
-              'meta_key' => '_thumbnail_id',
-              'meta_value' => RELATIVE_PT . $img->nmFileName
-              ));
-              $idMetaPostAttacht = DB::insertId(); */
-            /*  DB::insert('wp_postmeta', array(
-              'post_id' => $imgId, //primary key
-              'meta_key' => '_wp_attached_file',
-              'meta_value' => 'a:5:{s:5:"width";i:1920;s:6:"height";i:1080;s:4:"file";s:28:"' . RELATIVE_PT . date('Y').'/'.date("m") .'/'. $img->nmFileName . '";s:5:"sizes";a:5:{s:9:"thumbnail";a:4:{s:4:"file";s:28:"' . $img->nmFileName . '";s:5:"width";i:150;s:6:"height";i:150;s:9:"mime-type";s:10:"image/jpeg";}s:6:"medium";a:4:{s:4:"file";s:28:"' . $img->nmFileName . '";s:5:"width";i:300;s:6:"height";i:169;s:9:"mime-type";s:10:"image/jpeg";}s:12:"medium_large";a:4:{s:4:"file";s:28:"' . $img->nmFileName . '";s:5:"width";i:768;s:6:"height";i:432;s:9:"mime-type";s:10:"image/jpeg";}s:5:"large";a:4:{s:4:"file";s:29:"' . $img->nmFileName . '";s:5:"width";i:1024;s:6:"height";i:576;s:9:"mime-type";s:10:"image/jpeg";}s:32:"twentyseventeen-thumbnail-avatar";a:4:{s:4:"file";s:28:"' . $img->nmFileName . '";s:5:"width";i:100;s:6:"height";i:100;s:9:"mime-type";s:10:"image/jpeg";}}s:10:"image_meta";a:12:{s:8:"aperture";s:1:"0";s:6:"credit";s:0:"";s:6:"camera";s:0:"";s:7:"caption";s:0:"";s:17:"created_timestamp";s:1:"0";s:9:"copyright";s:0:"";s:12:"focal_length";s:1:"0";s:3:"iso";s:1:"0";s:13:"shutter_speed";s:1:"0";s:5:"title";s:0:"";s:11:"orientation";s:1:"0";s:8:"keywords";a:0:{}}}'
-              ));
-              $idMetaPostAttacht_file = DB::insertId();
-              /**
-             * Img Spotlight
-             */
-            /*  if ($img->flSpotlight === "1") {
-              $hasSpot = true;
-              GenimoWordpress::insertSpotLight($property->idPropertyDB, $imgId);
-              echo "HAS SPOTLIIGHT\n";
-              } */
-            //   echo "\n";
-            //} else {
-            //    echo "ERROR\n";
-            // }
-            //} else {
-            //    echo "EXISTS\n";
-            // }
-            // }
-            // var_dump($imgIds);
-            //Default Spotlight
-            //  if (!$hasSpot) {
-            //      GenimoWordpress::insertSpotLight($property->idPropertyDB, $imgIds[0]);
-            //  }
-            /**
-
-             * 
-             *          */
-            //copy('http://www.google.co.in/intl/en_com/images/srpr/logo1w.png', PATH_UPLOAD.'file.jpeg');
+            //var_dump($imagem);
+            $imgIds[] = $imagem->id;
+        }
+        if (count($imgIds) > 0) {
+            //Cria a imagem destacada e associa as imagens com o imovel
+            GenimoWordpress::insertSpotLight($property->idPropertyDB, $imgIds[0]);
+            for ($i = 1; $i < count($imgIds); $i++) {
+                // change Joe's password
+                DB::update('wp_posts', array(
+                    'post_parent' => $property->idPropertyDB
+                        ), "ID=%s", $imgIds[$i]);
+            }
         }
     }
 
@@ -554,7 +524,7 @@ class GenimoWordpress extends stdClass {
      */
     public static function cleanUrl($id) {
         // var_dump($id);die;
-        return "?post_type=listing&#038;p=";
+        return "?post_type=listing&#038;p=" . $id[0];
     }
 
     /*

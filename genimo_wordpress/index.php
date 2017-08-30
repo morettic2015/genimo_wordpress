@@ -23,6 +23,7 @@ $app->get('/property/{idCompany}/{idProperty}', function (Request $request, Resp
     echo "FINISH IMPORT DATA FROM PROPERTY" . $idProperty . "<br>";
     echo "INIT IMPORT IMAGE FROM PROPERTY" . $idProperty . "<br>";
     GenimoWordpress::copyImages($obj);
+     echo "FINISH IMPORT IMAGE FROM PROPERTY" . $idProperty . "<br>";
 });
 
 $app->run();
