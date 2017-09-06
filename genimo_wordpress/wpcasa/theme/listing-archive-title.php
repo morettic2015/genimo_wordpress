@@ -3,7 +3,7 @@
 	<?php do_action( 'wpsight_listing_archive_title_before' ); ?>
 
 	<div class="wpsight-listing-title">
-	    <?php the_title( sprintf( '<h2 class="entry-title"><a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></h2>' ); ?>
+	    <?php the_title( sprintf( '<h4 class="entry-title"><a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></h4>' ); ?>
 	</div>
 	
 	<?php do_action( 'wpsight_listing_archive_title_after' ); ?>

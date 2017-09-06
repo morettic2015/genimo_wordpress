@@ -4,7 +4,7 @@ $_GET['order'] = isset($_GET['order']) ? $_GET['order'] : false;
 ?>
 
 <div class="listings-sort">
-    <!--
+    
             <select name="listings-sort">
 
                     <option value=""><?php echo $args['labels']['orderby']; ?></option>
@@ -22,5 +22,5 @@ $_GET['order'] = isset($_GET['order']) ? $_GET['order'] : false;
                     <option<?php if ($_GET['orderby'] == 'title' && $_GET['order'] == 'desc') echo ' selected="selected"'; ?> value="<?php echo add_query_arg(array('orderby' => 'title', 'order' => 'desc')); ?>"><?php echo $args['labels']['title']; ?> (<?php echo $args['labels']['desc']; ?>)</option>
 
             </select>
-    -->
+   
 </div><!-- .listings-sort -->

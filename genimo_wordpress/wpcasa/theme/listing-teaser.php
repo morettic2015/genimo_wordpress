@@ -1,4 +1,4 @@
-<div class="wpsight-listing-teaser entry-content" itemscope itemtype="http://schema.org/Product">
+<div class="wpsight-listing-teaser" itemscope itemtype="http://schema.org/Product">
 
     <meta itemprop="name" content="<?php echo esc_attr($post->post_title); ?>" />
 
@@ -8,7 +8,7 @@
 
         <div class="wpsight-listing-left">
 
-            <meta itemprop="image" content="<?php echo esc_attr(wpsight_listing_thumbnail_url($post->ID, 'large')); ?>" />
+            <meta itemprop="image" content="<?php echo esc_attr(wpsight_listing_thumbnail_url($post->ID, 'thumbnail')); ?>" />
 
             <div class="wpsight-listing-image">
                 <a href="<?php the_permalink(); ?>" rel="bookmark">
@@ -22,16 +22,16 @@
 
             <div class="wpsight-listing-title clearfix">
 
-                <div class="alignleft">				
-                    <h3 class="entry-title">
+                <div class="alignleft">
+                    <h4 class="entry-title">
                         <a href="<?php echo get_permalink($post->ID); ?>" rel="bookmark"><?php echo get_the_title($post->ID); ?></a>
-                    </h3>					
+                    </h4>
                 </div>
 
-                <div class="alignright">					
+                <div class="alignright">
                     <div class="wpsight-listing-status">
                         <?php wpsight_listing_offer($post->ID); ?>
-                    </div>					    
+                    </div>
                 </div>
 
             </div>

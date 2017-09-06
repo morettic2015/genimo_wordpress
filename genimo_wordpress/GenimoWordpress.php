@@ -21,7 +21,7 @@ class GenimoWordpress extends stdClass {
         DB::debugMode();
         // DB::startTransaction();
         echo "<pre>";
-        echo "DAO INIT" . "<br>";
+        //echo "DAO INIT" . "<br>";
         //Read from url
         $urlProperty = "https://genimo.com.br/api/site/property/" . $idCompany . "/" . $idProperty;
         //Get JSON
@@ -32,12 +32,13 @@ class GenimoWordpress extends stdClass {
         //dum memnory
         //var_dump($obj);
         //die;
+        //
+        //$rooms
         //Id property
-        $idProperty = $obj->property->idProperty;
+        //$idProperty = $obj->property->idProperty;
         //Recupera meta key com o IdProperty
         $metaKeyIdProperty = DB::queryOneColumn('post_id', "select * from wp_postmeta where meta_key = '_listing_id' and meta_value = '" . $idProperty . "'");
-        print_r($metaKeyIdProperty);
-
+        //print_r($metaKeyIdProperty);
         //Post title
         $postTitle = $obj->property->nmCategory . ", " . $obj->property->nmNeighborhood;
         //Address
@@ -53,16 +54,19 @@ class GenimoWordpress extends stdClass {
         //Get Guid URL
         $guid = GenimoWordpress::cleanUrl($idPropertyDB);
         //Listing not found
+        ////type of business
+        $typeOfBusiness = GenimoWordpress::getTypeOfBusiness($obj->property);
+        //Get Date
+        $date = date("Y-m-d H:i:s");
         if ($idPropertyDB > 0) {
-            echo "INSERT<br>";
+            //echo "INSERT<br>";
             //Get Date
-            $date = date("Y-m-d H:i:s");
             //Não existe o post nem a meta key
             DB::insert('wp_posts', array(
                 'post_author' => 1, //default for all
                 'post_date' => $date, //Just now its new
                 'post_date_gmt' => $date, //just now its new
-                'post_content' => utf8_decode($obj->property->nmPropertySite), //Get as String UTF 8
+                'post_content' => utf8_decode($obj->property->dsPropertySite), //Get as String UTF 8
                 'post_title' => utf8_decode($postTitle), //Get as String UTF 8
                 'post_name' => makeSlug($postTitle . '_' . $idProperty), //Get as String UTF 8
                 'post_excerpt' => utf8_decode($obj->property->nmPropertySite), //Default Empty
@@ -82,8 +86,7 @@ class GenimoWordpress extends stdClass {
                 'post_mime_type' => '', //Default no need
                 'comment_count' => '0'                                          //Default no need
             ));
-            //type of business
-            $typeOfBusiness = GenimoWordpress::getTypeOfBusiness($obj->property);
+
             //Init metadata array for inserts
             $metadata = array();
             //Get new Property Key from database
@@ -122,6 +125,10 @@ class GenimoWordpress extends stdClass {
             $metadata[] = GenimoWordpress::prepareMeta('_details_6', $obj->property->amGarage, $idPropertyDB);
             $metadata[] = GenimoWordpress::prepareMeta('_details_7', $useOf, $idPropertyDB);
             $metadata[] = GenimoWordpress::prepareMeta('_details_8', $obj->property->qtYearBuilt, $idPropertyDB);
+            $metadata[] = GenimoWordpress::prepareMeta('_details_9', GenimoWordpress::getPropertyFloor($obj->property), $idPropertyDB);
+            $metadata[] = GenimoWordpress::prepareMeta('_vl_low_season_rent', $obj->property->vlLowSeasonRent, $idPropertyDB);
+            $metadata[] = GenimoWordpress::prepareMeta('_vl_rent', $obj->property->vlRental, $idPropertyDB);
+            $metadata[] = GenimoWordpress::prepareMeta('_vl_season_rent', $obj->property->vlSeasonRent, $idPropertyDB);
             //Insert post id meta
             //Get type of business and values for rent and sale
             //$typeOfBusiness = getTypeOfBusiness($obj->property);
@@ -130,7 +137,7 @@ class GenimoWordpress extends stdClass {
             $tax = utf8_decode($obj->property->nmNeighborhood . "," . $obj->property->nmCity);
             $taxSlug = makeSlug($tax);
 
-            echo "\n" . $taxSlug . "\n";
+            //echo "\n" . $taxSlug . "\n";
             GenimoWordpress::insertTaxionomy($taxSlug, $tax, $idPropertyDB, 'location', $tax);
 
             //new ID
@@ -138,12 +145,46 @@ class GenimoWordpress extends stdClass {
 
             // DB::commit();
         } else {
-            echo "UPDATE<br>";
-            //Old ID
             $obj->idPropertyDB = $metaKeyIdProperty[0];
+            //echo "UPDATE " . $obj->idPropertyDB . "<br>";
+            //Old ID
+            DB::update('wp_posts', array(
+                'post_content' => utf8_decode($obj->property->dsPropertySite), //Get as String UTF 8
+                'post_title' => utf8_decode($postTitle), //Get as String UTF 8
+                'post_name' => makeSlug($postTitle . '_' . $idProperty), //Get as String UTF 8
+                'post_excerpt' => utf8_decode($obj->property->nmPropertySite), //Default Empty
+                'post_status' => 'publish', //Publish online / Trash offline
+                'post_modified' => $date, //Just now
+                'post_modified_gmt' => $date, //Just now
+                    ), "ID=%s", $obj->idPropertyDB);
 
-            echo $obj->idPropertyDB;
             //Post e meta key existem
+            GenimoWordpress::updateALLPropertyTaxionomy($obj->property, $obj->idPropertyDB);
+            GenimoWordpress::updatePostMeta($obj->idPropertyDB, $typeOfBusiness->tpPriceOffer, '_price_offer');
+            GenimoWordpress::updatePostMeta($obj->idPropertyDB, $typeOfBusiness->tpPricePeriod, '_price_period');
+            GenimoWordpress::updatePostMeta($obj->idPropertyDB, $typeOfBusiness->vlPrice, '_price');
+            GenimoWordpress::updatePostMeta($obj->idPropertyDB, $obj->property->amSuite + $obj->property->amRooms, '_details_1');
+            GenimoWordpress::updatePostMeta($obj->idPropertyDB, $obj->property->amBathroom, '_details_2');
+            GenimoWordpress::updatePostMeta($obj->idPropertyDB, $obj->property->vlPropertyTotalArea, '_details_3');
+            GenimoWordpress::updatePostMeta($obj->idPropertyDB, $obj->property->vlAreaM2C, '_details_4');
+            GenimoWordpress::updatePostMeta($obj->idPropertyDB, $obj->property->vlGroundArea, '_details_5');
+            GenimoWordpress::updatePostMeta($obj->idPropertyDB, $obj->property->amGarage, '_details_6');
+            GenimoWordpress::updatePostMeta($obj->idPropertyDB, $useOf, '_details_7');
+            GenimoWordpress::updatePostMeta($obj->idPropertyDB, $obj->property->qtYearBuilt, '_details_8');
+            GenimoWordpress::updatePostMeta($obj->idPropertyDB, GenimoWordpress::getPropertyFloor($obj->property), '_details_9');
+            GenimoWordpress::updatePostMeta($obj->idPropertyDB, $dsAddressMap, '_map_address');
+            GenimoWordpress::updatePostMeta($obj->idPropertyDB, $obj->property->vlLatitude, '_geolocation_lat');
+            GenimoWordpress::updatePostMeta($obj->idPropertyDB, $obj->property->vlLongitude, '_geolocation_long');
+            GenimoWordpress::updatePostMeta($obj->idPropertyDB, $dsAddress, '_geolocation_formatted_address');
+            GenimoWordpress::updatePostMeta($obj->idPropertyDB, $obj->property->dsAddress, '_geolocation_street');
+            GenimoWordpress::updatePostMeta($obj->idPropertyDB, $obj->property->sgState, '_geolocation_state_short');
+            GenimoWordpress::updatePostMeta($obj->idPropertyDB, $obj->property->nmState, '_geolocation_state_long');
+            GenimoWordpress::updatePostMeta($obj->idPropertyDB, $obj->property->vlLowSeasonRent, '_vl_low_season_rent');
+            GenimoWordpress::updatePostMeta($obj->idPropertyDB, $obj->property->vlRental, '_vl_rent');
+            GenimoWordpress::updatePostMeta($obj->idPropertyDB, $obj->property->vlSeasonRent, '_vl_season_rent');
+            
+            
+            //GenimoWordpress::prepareMeta('_vl_rent', $obj->property->vlRental, $idPropertyDB);
         }
 
         //var_dump($types);
@@ -161,6 +202,21 @@ class GenimoWordpress extends stdClass {
     public static function updateALLPropertyTaxionomy($property, $idPropertyDB) {
         //echo "Taxionomies";
         //var_dump($property);die();
+        if ($property->flLaundry == 1) {
+            GenimoWordpress::insertTaxionomy("flLaundry", "Lavanderia", $idPropertyDB, 'feature', utf8_decode("Lavanderia"));
+        }
+        if ($property->flLavatory == 1) {
+            GenimoWordpress::insertTaxionomy("flLavatory", "Lavabo", $idPropertyDB, 'feature', utf8_decode("Lavabo"));
+        }
+        if ($property->flCloset == 1) {
+            GenimoWordpress::insertTaxionomy("flMaidRoom", "Dependencia Empregada", $idPropertyDB, 'feature', utf8_decode("Dependência Empregada"));
+        }
+        if ($property->flCloset == 1) {
+            GenimoWordpress::insertTaxionomy("flCloset", "Closet", $idPropertyDB, 'feature', utf8_decode("Closet"));
+        }
+        if ($property->flInhabited == 1) {
+            GenimoWordpress::insertTaxionomy("flInhabited", "Habitado", $idPropertyDB, 'feature', utf8_decode("O imovel  está habitado"));
+        }
         if ($property->flAcceptFunding == 1) {
             GenimoWordpress::insertTaxionomy("flAcceptFunding", "Aceita financiamento", $idPropertyDB, 'feature', utf8_decode("O imóvel aceita financiamento"));
         }
@@ -256,41 +312,41 @@ class GenimoWordpress extends stdClass {
       ]
      */
     public static function insertCatCat($id, $idPropertyDB) {
-        echo "---$id----";
-        echo "$idPropertyDB-----";
+        // echo "---$id----";
+        // echo "$idPropertyDB-----";
         $pid = intval($id);
         switch ($pid) {
             case 1:
                 GenimoWordpress::insertTaxionomy("catCasa", "Casa", $idPropertyDB, 'listing-type', "Casa");
-                echo "CASA";
+                // echo "CASA";
                 break;
             case 2:
                 GenimoWordpress::insertTaxionomy("catApto", "Apartamento", $idPropertyDB, 'listing-type', "Apartamento");
-                echo "APTO";
+                //  echo "APTO";
                 break;
             case 3:
                 GenimoWordpress::insertTaxionomy("catTerreno", "Terreno", $idPropertyDB, 'listing-type', "Terreno");
-                echo "TERRENO";
+                //  echo "TERRENO";
                 break;
             case 4:
                 GenimoWordpress::insertTaxionomy("catQuitinete", "Quitinete", $idPropertyDB, 'listing-type', "Quitinete");
-                echo "QUITINETE";
+                //   echo "QUITINETE";
                 break;
             case 5:
                 GenimoWordpress::insertTaxionomy("catSalaComercial", "Sala Comercial", $idPropertyDB, 'listing-type', "Sala Comercial");
-                echo "SALA COMERCIAL";
+                //  echo "SALA COMERCIAL";
                 break;
             case 6:
                 GenimoWordpress::insertTaxionomy("catGalpao", "Galpão", $idPropertyDB, 'listing-type', "Galpão");
-                echo "GAlpão";
+                //   echo "GAlpão";
                 break;
             case 7:
                 GenimoWordpress::insertTaxionomy("catCobertura", "Cobertura", $idPropertyDB, 'listing-type', "Cobertura");
-                echo "Cobertura";
+                //   echo "Cobertura";
                 break;
         }
 
-        echo "\n";
+        //echo "\n";
     }
 
     /**
@@ -353,6 +409,7 @@ class GenimoWordpress extends stdClass {
             $term_id = DB::insertId();
             //echo "\nTERM TAXIONOMY ID".$term_id;
         } else {
+            //echo "<br>$slug, $name, $idProperty, $taxionomy, $desc";
             // return null;
         }
     }
@@ -408,14 +465,15 @@ class GenimoWordpress extends stdClass {
             //echo $path . "\n";
             //if (!file_exists($path)) {
             //verify if file exists if exists skip continue
-            DB::query("SELECT ID FROM wp_posts where post_type = 'attachment' and guid like '%" . $img->nmFileName . "%'");
+            $pimgId = DB::query("SELECT ID FROM wp_posts where post_type = 'attachment' and guid like '%" . $img->nmFileName . "%'");
             $counter = DB::count();
-
+            //var_dump($pimgId);
             //echo "\n Image Occurences:" . $counter;
-
+            //echo $pimgId['ID'];
             if ($counter > 0) {
                 ///echo "\n";
                 //echo $img->nmFileName . ' Exists\n';
+                $imgIds[] = $pimgId[0]['ID'];
                 continue;
             }
 
@@ -474,7 +532,7 @@ class GenimoWordpress extends stdClass {
       @Get address formated
      */
     public static function getAddress($property) {
-        return $property->nmNeighborhood . ", " . $property->nmCity . " - " . $property->sgState;
+        return utf8_decode($property->nmNeighborhood . ", " . $property->nmCity . " - " . $property->sgState);
     }
 
     /**
@@ -515,7 +573,29 @@ class GenimoWordpress extends stdClass {
      */
 
     public static function getPropertyFloor($property) {
-        $dsFloor = ($property->tpFloor == 1) ? "Madeira" : ($property->tpFloor == 2) ? "Ceramica" : ($property->tpFloor == 3) ? "Vinílico" : ($property->tpFloor == 4) ? "Laminado" : ($property->tpFloor == 5) ? "Carpete" : "";
+        $cod = intval($property->tpFloor);
+        $dsFloor = "";
+        switch ($cod) {
+            case 1:
+                $dsFloor = "Madeira";
+                break;
+            case 2:
+                $dsFloor = "Ceramica";
+                break;
+            case 3:
+                $dsFloor = "Vinílico";
+                break;
+            case 4:
+                $dsFloor = "Laminado";
+                break;
+            case 5:
+                $dsFloor = "Carpete";
+                break;
+        }
+
+
+        //   echo $dsFloor . "------------------------\n";
+
         return $dsFloor;
     }
 
@@ -558,6 +638,21 @@ class GenimoWordpress extends stdClass {
         //var_dump($typeOfBusiness);
 
         return $typeOfBusiness;
+    }
+
+    //update imobiliaria_com.wp_postmeta  set meta_value=%s where meta_key =%s and post_id =$i;
+    public static function updatePostMeta($ID, $meta_value, $meta_key) {
+        $idMetaKeyLocal = DB::queryFirstRow("select meta_id from wp_postmeta where meta_key = '$meta_key' and post_id = '$ID'");
+        if (empty($idMetaKeyLocal['meta_id'])) {
+            DB::insert('wp_postmeta', array(
+                'meta_key' => $meta_key,
+                'meta_value' => $meta_value,
+                'post_id' => $ID
+            ));
+        } else {
+            //if()
+            DB::query("update imobiliaria_com.wp_postmeta  set meta_value=%s where meta_key =%s and post_id =%i", $meta_value, $meta_key, $ID);
+        }
     }
 
 }

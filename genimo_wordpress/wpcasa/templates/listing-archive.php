@@ -1,18 +1,18 @@
-<div id="listing-<?php the_ID(); ?>" <?php wpsight_listing_class('entry-content listing-archive'); ?> itemscope itemtype="http://schema.org/Product">
+<div id="listing-<?php the_ID(); ?>" <?php wpsight_listing_class('listing-archive'); ?> itemscope itemtype="http://schema.org/Product">
 
     <meta itemprop="name" content="<?php echo esc_attr($post->post_title); ?>" />
 
-    <!-- <div itemprop="offers" itemscope itemtype="http://schema.org/Offer" class="clearfix"> -->
-    <div>
+    <div itemprop="offers" itemscope itemtype="http://schema.org/Offer" class="clearfix">
+
         <?php do_action('wpsight_listing_archive_before', $post); ?>
 
-        <div style="float:left; position: relative; width: 30%; margin:1.66%;">
+        <div class="wpsight-listing-left">
 
             <?php wpsight_get_template('listing-archive-image.php'); ?>
 
         </div>
 
-        <div style=" float:left; position: relative; width: 70%; margin:1.66%;">
+        <div class="wpsight-listing-right">
 
             <?php wpsight_get_template('listing-archive-title.php'); ?>
 

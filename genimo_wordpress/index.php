@@ -18,12 +18,12 @@ $app = new \Slim\App;
 $app->get('/property/{idCompany}/{idProperty}', function (Request $request, Response $response) use ($app) {
     $idProperty = $request->getAttribute('idProperty');
     $idCompany = $request->getAttribute('idCompany');
-    echo "INIT IMPORT DATA FROM PROPERTY" . $idProperty . "<br>";
+    //echo "INIT IMPORT DATA FROM PROPERTY" . $idProperty . "<br>";
     $obj = GenimoWordpress::syncProperty($idCompany, $idProperty);
-    echo "FINISH IMPORT DATA FROM PROPERTY" . $idProperty . "<br>";
-    echo "INIT IMPORT IMAGE FROM PROPERTY" . $idProperty . "<br>";
+   // echo "FINISH IMPORT DATA FROM PROPERTY" . $idProperty . "<br>";
+   // echo "INIT IMPORT IMAGE FROM PROPERTY" . $idProperty . "<br>";
     GenimoWordpress::copyImages($obj);
-     echo "FINISH IMPORT IMAGE FROM PROPERTY" . $idProperty . "<br>";
+   //  echo "FINISH IMPORT IMAGE FROM PROPERTY" . $idProperty . "<br>";
 });
 
 $app->run();
