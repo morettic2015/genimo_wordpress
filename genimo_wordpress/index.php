@@ -26,6 +26,12 @@ $app->get('/property/{idCompany}/{idProperty}', function (Request $request, Resp
    //  echo "FINISH IMPORT IMAGE FROM PROPERTY" . $idProperty . "<br>";
 });
 
+$app->get('/sellers/{idCompany}', function (Request $request, Response $response) use ($app) {
+    $idCompany = $request->getAttribute('idCompany');
+    //echo "INIT IMPORT DATA FROM PROPERTY" . $idProperty . "<br>";
+    $obj = GenimoWordpress::syncSellers($idCompany);
+});
+
 $app->run();
 
 
