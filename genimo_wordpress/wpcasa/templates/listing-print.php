@@ -24,11 +24,11 @@ $listing_offer = wpsight_get_listing_offer( $listing->ID, false ); ?>
 	<div class="actions clearfix">
 	
 		<div class="alignleft">
-			<a href="<?php echo esc_url_raw( get_permalink( $listing->ID ) ); ?>" class="button back">&laquo; <?php _ex( 'Back to Listing', 'listing print', 'wpcasa' ); ?></a>
+			<a href="<?php echo esc_url_raw( get_permalink( $listing->ID ) ); ?>" class="button back">&laquo; <?php _ex( 'Voltar', 'listing print', 'wpcasa' ); ?></a>
 		</div>
 		
 		<div class="alignright">
-			<a href="#" onclick="window.print();return false" class="button printnow"><?php _ex( 'Print Now', 'listing print', 'wpcasa' ); ?></a>
+			<a href="#" onclick="window.print();return false" class="button printnow"><?php _ex( 'Imprimir', 'listing print', 'wpcasa' ); ?></a>
 		</div>
 	
 	</div><!-- .actions -->
@@ -91,7 +91,6 @@ $listing_offer = wpsight_get_listing_offer( $listing->ID, false ); ?>
 		
 		</div><!-- .wrap -->
 	
-	</page>WPSight_Shortcode_ListingsWPSight_Shortcode_ListingsWPSight_Shortcode_ListingsWPSight_Shortcode_ListingsWPSight_Shortcode_ListingsWPSight_Shortcode_ListingsWPSight_Shortcode_ListingsWPSight_Shortcode_ListingsWPSight_Shortcode_ListingsWPSight_Shortcode_ListingsWPSight_Shortcode_ListingsWPSight_Shortcode_ListingsWPSight_Shortcode_ListingsWPSight_Shortcode_ListingsWPSight_Shortcode_ListingsWPSight_Shortcode_ListingsWPSight_Shortcode_ListingsWPSight_Shortcode_ListingsWPSight_Shortcode_ListingsWPSight_Shortcode_ListingsWPSight_Shortcode_ListingsWPSight_Shortcode_ListingsWPSight_Shortcode_ListingsWPSight_Shortcode_ListingsWPSight_Shortcode_ListingsWPSight_Shortcode_ListingsWPSight_Shortcode_ListingsWPSight_Shortcode_ListingsWPSight_Shortcode_ListingsWPSight_Shortcode_ListingsWPSight_Shortcode_ListingsWPSight_Shortcode_ListingsWPSight_Shortcode_ListingsWPSight_Shortcode_ListingsWPSight_Shortcode_ListingsWPSight_Shortcode_Listings
-
+	</page>
 </body>
 </html>

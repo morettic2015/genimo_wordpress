@@ -1673,7 +1673,7 @@ msgstr "Tipo do piso"
 
 #: includes/class-wpsight-template.php:451
 msgid "vl_rent"
-msgstr "Aluguel"
+msgstr "Aluguel Anual"
 
 #: includes/class-wpsight-template.php:451
 msgid "vl_season_rent"
@@ -1681,7 +1681,7 @@ msgstr "Aluguel temporada"
 
 #: includes/class-wpsight-template.php:451
 msgid "vl_low_season_rent"
-msgstr "Aluguel baixa temporada"
+msgstr "Aluguel estudante"
 
 
 #: includes/class-wpsight-template.php:451

@@ -144,7 +144,7 @@ class WPSight_General {
             ),
             'vl_rent' => array(
                 'id' => 'vl_rent',
-                'label' => __('Valor Aluguel', 'wpcasa'),
+                'label' => __('Aluguel Anual', 'wpcasa'),
                 'unit' => '',
                 'data' => false,
                 'description' => '',
@@ -156,7 +156,7 @@ class WPSight_General {
             ),
             'vl_season_rent' => array(
                 'id' => 'vl_season_rent',
-                'label' => __('Aluguel diário', 'wpcasa'),
+                'label' => __('Aluguel Temporada', 'wpcasa'),
                 'unit' => '',
                 'data' => false,
                 'description' => '',

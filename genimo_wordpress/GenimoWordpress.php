@@ -4,15 +4,62 @@
  *   @Class for integrate GENIMO ERP With Wordpress Wp-casa;
  *   @Copyright @morettic.com.br
  * 
- * delete FROM imobiliaria_com.wp_postmeta where meta_key in ('_listing_id','_listing_not_available','_listing_sticky','_listing_featured','_map_address','_price','_price_period'
-  ,'_listing_title','_gallery_imported','_listing_featured'
-  ,'_price_offer','_geolocation_lat','_geolocation_long','_geolocation_formatted_address','_geolocation_street','_geolocation_state_short','_geolocation_state_long',
-  '_geolocation_country_short','_geolocation_country_long','_geolocated','_details_1','_details_2','_details_3','_details_4','_details_5','_details_6','_details_7','_details_8'
-  );
  * 
  * 
  */
 class GenimoWordpress extends stdClass {
+
+    public static function adSiteContact() {
+        DB::debugMode();
+        echo "<pre>";
+        $adSiteContacts = DB::query("select distinct ID from wp_posts where post_type = 'nf_sub'");
+        //var_dump($adSiteContacts);
+        //echo "aaa";
+        $registers = array();
+        $rows = array();
+        $i = 0;
+        foreach ($adSiteContacts as $row) {
+            $query = "select (select meta_value as mensagem from wp_postmeta where post_id in(select ID from wp_posts where id = " . $row['ID'] . ") and meta_key = '_seq_num') as id,
+                    (select meta_value as nome from wp_postmeta where post_id in(select ID from wp_posts where id = " . $row['ID'] . ") and meta_key = '_field_5') as nome,
+                    (select meta_value as email from wp_postmeta where post_id in(select ID from wp_posts where id = " . $row['ID'] . ") and meta_key = '_field_6') as email, 
+                    (select meta_value as phone from wp_postmeta where post_id in(select ID from wp_posts where id = " . $row['ID'] . ") and meta_key = '_field_7') as phone,
+                    (select meta_value as mensagem from wp_postmeta where post_id in(select ID from wp_posts where id = " . $row['ID'] . ") and meta_key = '_field_9') as msg,
+                    (select meta_value as mensagem from wp_postmeta where post_id in(select ID from wp_posts where id = " . $row['ID'] . ") and meta_key = '_is_exported') as stats
+                    from dual";
+            //Local object
+            $o = DB::query($query);
+            $registers[] = $o;
+
+            ///var_dump($o);
+
+            /*  */
+            //has been integrated
+            if ($o[0]['stats'] == "1") {
+                continue;
+            }
+            //Flag as exported
+            $rows[] = array(
+                'post_id' => $row['ID'],
+                'meta_key' => '_is_exported',
+                'meta_value' => '1'
+            );
+
+            $i++;
+        }
+        if (count($rows) > 0)
+            DB::insert('wp_postmeta', $rows);
+        //$obj = json_encode($registers); //var_dump($obj);die();
+        //echo $obj;
+    }
+
+    public static function listingsLoad($idCompany) {
+        $urlProperty = "https://genimo.com.br/api/site/propertyForPublication/" . $idCompany;
+        $json = file_get_contents($urlProperty);
+        $obj = json_decode($json); //var_dump($obj);die();
+        foreach ($obj as $r) {
+            GenimoWordpress::syncProperty($idCompany, $r->idProperty);
+        }
+    }
 
     public static function syncSellers($idCompany) {
         DB::debugMode();
@@ -188,6 +235,8 @@ class GenimoWordpress extends stdClass {
             $metadata[] = GenimoWordpress::prepareMeta('_vl_rent', $obj->property->vlRental, $idPropertyDB);
             $metadata[] = GenimoWordpress::prepareMeta('_vl_season_rent', $obj->property->vlSeasonRent, $idPropertyDB);
             //Insert post id meta
+            //  var_dump($obj->property);
+            //    echo $obj->property->vlSeasonRent.'/'.$obj->property->vlRental.'/'.$obj->property->vlLowSeasonRent;
             //Get type of business and values for rent and sale
             //$typeOfBusiness = getTypeOfBusiness($obj->property);
             DB::insert('wp_postmeta', $metadata);
@@ -241,7 +290,8 @@ class GenimoWordpress extends stdClass {
             GenimoWordpress::updatePostMeta($obj->idPropertyDB, $obj->property->vlRental, '_vl_rent');
             GenimoWordpress::updatePostMeta($obj->idPropertyDB, $obj->property->vlSeasonRent, '_vl_season_rent');
 
-
+            //  var_dump($obj->property);
+            //echo $obj->property->vlSeasonRent.'/'.$obj->property->vlRental.'/'.$obj->property->vlLowSeasonRent;
             //GenimoWordpress::prepareMeta('_vl_rent', $obj->property->vlRental, $idPropertyDB);
         }
 
@@ -253,6 +303,9 @@ class GenimoWordpress extends stdClass {
         return $obj;
     }
 
+    /**
+
+     * */
     public static function removePropertyTaxionomyRelationship($idProperty, $term_slug) {
         //Get Term ID
         $result = DB::queryFirstRow("SELECT term_id FROM wp_terms WHERE slug=%s", $term_slug);
@@ -260,7 +313,7 @@ class GenimoWordpress extends stdClass {
         //Get Term Relatioship ID
         $result = DB::queryFirstRow("SELECT term_taxonomy_id FROM imobiliaria_com.wp_term_taxonomy where term_id=%s", $term_id);
         $term_taxonomy_id = $result['term_taxonomy_id'];
-        if(empty($term_taxonomy_id))
+        if (empty($term_taxonomy_id))
             return;
         //Remove relatioships not used anymore
         DB::query("delete FROM imobiliaria_com.wp_term_relationships where object_id=$idProperty and term_taxonomy_id =$term_taxonomy_id");
@@ -277,116 +330,116 @@ class GenimoWordpress extends stdClass {
         //var_dump($property);die();
         if ($property->flLaundry == 1) {
             GenimoWordpress::insertTaxionomy("flLaundry", "Lavanderia", $idPropertyDB, 'feature', utf8_decode("Lavanderia"));
-        }else{
-            GenimoWordpress::removePropertyTaxionomyRelationship($idPropertyDB,"flLaundry");
+        } else {
+            GenimoWordpress::removePropertyTaxionomyRelationship($idPropertyDB, "flLaundry");
         }
         if ($property->flLavatory == 1) {
             GenimoWordpress::insertTaxionomy("flLavatory", "Lavabo", $idPropertyDB, 'feature', utf8_decode("Lavabo"));
-        }else{
-            GenimoWordpress::removePropertyTaxionomyRelationship($idPropertyDB,"flLavatory");
+        } else {
+            GenimoWordpress::removePropertyTaxionomyRelationship($idPropertyDB, "flLavatory");
         }
         if ($property->flCloset == 1) {
             GenimoWordpress::insertTaxionomy("flMaidRoom", "Dependencia Empregada", $idPropertyDB, 'feature', utf8_decode("Dependência Empregada"));
-        }else{
-            GenimoWordpress::removePropertyTaxionomyRelationship($idPropertyDB,"flMaidRoom");
+        } else {
+            GenimoWordpress::removePropertyTaxionomyRelationship($idPropertyDB, "flMaidRoom");
         }
         if ($property->flCloset == 1) {
             GenimoWordpress::insertTaxionomy("flCloset", "Closet", $idPropertyDB, 'feature', utf8_decode("Closet"));
-        }else{
-            GenimoWordpress::removePropertyTaxionomyRelationship($idPropertyDB,"flCloset");
+        } else {
+            GenimoWordpress::removePropertyTaxionomyRelationship($idPropertyDB, "flCloset");
         }
         if ($property->flInhabited == 1) {
             GenimoWordpress::insertTaxionomy("flInhabited", "Habitado", $idPropertyDB, 'feature', utf8_decode("O imovel  está habitado"));
-        }else{
-            GenimoWordpress::removePropertyTaxionomyRelationship($idPropertyDB,"flInhabited");
+        } else {
+            GenimoWordpress::removePropertyTaxionomyRelationship($idPropertyDB, "flInhabited");
         }
         if ($property->flAcceptFunding == 1) {
             GenimoWordpress::insertTaxionomy("flAcceptFunding", "Aceita financiamento", $idPropertyDB, 'feature', utf8_decode("O imóvel aceita financiamento"));
-        }else{
-            GenimoWordpress::removePropertyTaxionomyRelationship($idPropertyDB,"flAcceptFunding");
+        } else {
+            GenimoWordpress::removePropertyTaxionomyRelationship($idPropertyDB, "flAcceptFunding");
         }
         if ($property->tpFurnished == 3) {
             GenimoWordpress::insertTaxionomy("tpFurnished", "Mobiliado", $idPropertyDB, 'feature', utf8_decode("O imóvel está mobiliado"));
         }
         if ($property->flHighStandart == 1) {
             GenimoWordpress::insertTaxionomy("flHighStandart", utf8_decode("Alto padrão"), $idPropertyDB, 'feature', utf8_decode("Imóvel de alto padrão"));
-        }else{
-            GenimoWordpress::removePropertyTaxionomyRelationship($idPropertyDB,"flHighStandart");
+        } else {
+            GenimoWordpress::removePropertyTaxionomyRelationship($idPropertyDB, "flHighStandart");
         }
         if ($property->flFacingSea == 1) {
             GenimoWordpress::insertTaxionomy("flFacingSea", "Frente para o mar", $idPropertyDB, 'feature', utf8_decode("Localizado de frente para o mar"));
-        }else{
-            GenimoWordpress::removePropertyTaxionomyRelationship($idPropertyDB,"flFacingSea");
+        } else {
+            GenimoWordpress::removePropertyTaxionomyRelationship($idPropertyDB, "flFacingSea");
         }
         if ($property->flBarbecueGrill == 1) {
             GenimoWordpress::insertTaxionomy("flBarbecueGrill", "Churrasqueira", $idPropertyDB, 'feature', utf8_decode("O imóvel possui churrasqueira na sacada"));
-        }else{
-            GenimoWordpress::removePropertyTaxionomyRelationship($idPropertyDB,"flBarbecueGrill");
+        } else {
+            GenimoWordpress::removePropertyTaxionomyRelationship($idPropertyDB, "flBarbecueGrill");
         }
         if ($property->flFireplace == 1) {
             GenimoWordpress::insertTaxionomy("flFireplace", "Lareira", $idPropertyDB, 'feature', utf8_decode("O imóvel possui lareira"));
-        }else{
-            GenimoWordpress::removePropertyTaxionomyRelationship($idPropertyDB,"flFireplace");
+        } else {
+            GenimoWordpress::removePropertyTaxionomyRelationship($idPropertyDB, "flFireplace");
         }
         if ($property->flBalcony == 1) {
             GenimoWordpress::insertTaxionomy("flBalcony", "Sacada", $idPropertyDB, 'feature', utf8_decode("O imóvel possui sacada"));
-        }else{
-            GenimoWordpress::removePropertyTaxionomyRelationship($idPropertyDB,"flBalcony");
+        } else {
+            GenimoWordpress::removePropertyTaxionomyRelationship($idPropertyDB, "flBalcony");
         }
         if ($property->flHeatedPool == 1) {
             GenimoWordpress::insertTaxionomy("flHeatedPool", "Piscina aquecida", $idPropertyDB, 'feature', utf8_decode("O imóvel possui piscina aquecida"));
-        }else{
-            GenimoWordpress::removePropertyTaxionomyRelationship($idPropertyDB,"flHeatedPool");
+        } else {
+            GenimoWordpress::removePropertyTaxionomyRelationship($idPropertyDB, "flHeatedPool");
         }
         if ($property->flGym == 1) {
             GenimoWordpress::insertTaxionomy("flGym", "Academia", $idPropertyDB, 'feature', utf8_decode("O imóvel possui academia"));
-        }else{
-            GenimoWordpress::removePropertyTaxionomyRelationship($idPropertyDB,"flGym");
+        } else {
+            GenimoWordpress::removePropertyTaxionomyRelationship($idPropertyDB, "flGym");
         }
         if ($property->flAccessChallengedPeople == 1) {
             GenimoWordpress::insertTaxionomy("flAccessChallengedPeople", "Acessibilidade", $idPropertyDB, 'feature', "O condominio possui acesso para portadores de necessidades especiais");
-        }else{
-            GenimoWordpress::removePropertyTaxionomyRelationship($idPropertyDB,"flAccessChallengedPeople");
+        } else {
+            GenimoWordpress::removePropertyTaxionomyRelationship($idPropertyDB, "flAccessChallengedPeople");
         }
         if ($property->flCollectiveBarbecue == 1) {
             GenimoWordpress::insertTaxionomy("flCollectiveBarbecue", "Churrasqueira coletiva", $idPropertyDB, 'feature', "O imóvel possui churrasqueira coletiva");
-        }else{
-            GenimoWordpress::removePropertyTaxionomyRelationship($idPropertyDB,"flCollectiveBarbecue");
+        } else {
+            GenimoWordpress::removePropertyTaxionomyRelationship($idPropertyDB, "flCollectiveBarbecue");
         }
         if ($property->flElevator == 1) {
             GenimoWordpress::insertTaxionomy("flElevator", "Elevador", $idPropertyDB, 'feature', "O imóvel possui elevador");
-        }else{
-            GenimoWordpress::removePropertyTaxionomyRelationship($idPropertyDB,"flElevator");
+        } else {
+            GenimoWordpress::removePropertyTaxionomyRelationship($idPropertyDB, "flElevator");
         }
         if ($property->flPlayground == 1) {
             GenimoWordpress::insertTaxionomy("flPlayground", "Playground", $idPropertyDB, 'feature', "O imóvel possui playground");
-        }else{
-            GenimoWordpress::removePropertyTaxionomyRelationship($idPropertyDB,"flPlayground");
+        } else {
+            GenimoWordpress::removePropertyTaxionomyRelationship($idPropertyDB, "flPlayground");
         }
         if ($property->flPool == 1) {
             GenimoWordpress::insertTaxionomy("flPool", "Piscina", $idPropertyDB, 'feature', "O imóvel tem piscina");
-        }else{
-            GenimoWordpress::removePropertyTaxionomyRelationship($idPropertyDB,"flPool");
+        } else {
+            GenimoWordpress::removePropertyTaxionomyRelationship($idPropertyDB, "flPool");
         }
         if ($property->flOrdinance == 1) {
             GenimoWordpress::insertTaxionomy("flOrdinance", "Portaria 24 horas", $idPropertyDB, 'feature', "O imóvel tem portaria 24 horas");
-        }else{
-            GenimoWordpress::removePropertyTaxionomyRelationship($idPropertyDB,"flOrdinance");
+        } else {
+            GenimoWordpress::removePropertyTaxionomyRelationship($idPropertyDB, "flOrdinance");
         }
         if ($property->flSportsCourt == 1) {
             GenimoWordpress::insertTaxionomy("flSportsCourt", "Quadra de esportes", $idPropertyDB, 'feature', "O imóvel possui quadra de esportes");
-        }else{
-            GenimoWordpress::removePropertyTaxionomyRelationship($idPropertyDB,"flSportsCourt");
+        } else {
+            GenimoWordpress::removePropertyTaxionomyRelationship($idPropertyDB, "flSportsCourt");
         }
         if ($property->flLoungeParties == 1) {
             GenimoWordpress::insertTaxionomy("flLoungeParties", "Salão de festas", $idPropertyDB, 'feature', "O imóvel tem salão de festas");
-        }else{
-            GenimoWordpress::removePropertyTaxionomyRelationship($idPropertyDB,"flLoungeParties");
+        } else {
+            GenimoWordpress::removePropertyTaxionomyRelationship($idPropertyDB, "flLoungeParties");
         }
         if ($property->tpSpotlight > 0) {
             GenimoWordpress::insertTaxionomy("tpSpotlight", "Oportunidade do momento", $idPropertyDB, 'feature', "Oportunidade do momento");
-        }else{
-            GenimoWordpress::removePropertyTaxionomyRelationship($idPropertyDB,"tpSpotlight");
+        } else {
+            GenimoWordpress::removePropertyTaxionomyRelationship($idPropertyDB, "tpSpotlight");
         }
 
         /**

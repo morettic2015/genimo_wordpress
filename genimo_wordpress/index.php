@@ -31,6 +31,15 @@ $app->get('/sellers/{idCompany}', function (Request $request, Response $response
     //echo "INIT IMPORT DATA FROM PROPERTY" . $idProperty . "<br>";
     $obj = GenimoWordpress::syncSellers($idCompany);
 });
+$app->get('/listings/{idCompany}', function (Request $request, Response $response) use ($app) {
+    $idCompany = $request->getAttribute('idCompany');
+    //echo "INIT IMPORT DATA FROM PROPERTY" . $idProperty . "<br>";
+    GenimoWordpress::listingsLoad($idCompany);
+});
+$app->get('/adsitecontact/', function (Request $request, Response $response) use ($app) {
+    
+    GenimoWordpress::adSiteContact();
+});
 
 $app->run();
 
