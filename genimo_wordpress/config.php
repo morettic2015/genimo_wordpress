@@ -20,4 +20,21 @@ const PATH_UPLOAD = "/var/www/frute.genimo.com.br/public_html/wp-content/uploads
 const BASE_IMAGES = "http://frute.genimo.com.br/wp-content/uploads/";
 const RELATIVE_PT = "genimo/";
 const REST_MEDIA_URL = "http://frute.genimo.com.br/wp-json/wp/v2/media";
+//Lead mobbsss
+//Lead Mobi
+const MAUTIC_PUBLIC_KEY = "545h4a5zslc0404cs0c08sw0w8oowokgs4gg8k8kgccs4wcgwg";
+const MAUTIC_SECRET_KEY = "3dd6uhl1ujms4g800s0004go08wkwwswg00cwoscs4scgsgw40";
+const MAUTIC_INSTANCE_URL = "https://inbound.citywatch.com.br";
+const MAUTIC_INSTANCE_API = "https://inbound.citywatch.com.br/api/";
+const MAUTIC_CALLBACK_URL = "http://frute.genimo.com.br/synchronize/leadmobi/";
+const MAUTIC_USER = "leadmobi";
+const MAUTIC_PASS = "leadmobi";
+//Segmentos
+const MAUTIC_S_NAME_C = "Corretores";
+const MAUTIC_S_SLUG_C = "Corretores-Genimo-Wordpress";
+const MAUTIC_S_DESC_C = "Corretores Leads Genimo Wordpress";
+//Clientes
+const MAUTIC_S_NAME_L = "Rute Araújo Corretora de Imóveis";
+const MAUTIC_S_SLUG_L = "Rute-Araujo-Corretora";
+const MAUTIC_S_DESC_L = "Leads Rute Araujo";
 ?>

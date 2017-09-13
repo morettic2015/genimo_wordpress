@@ -18,6 +18,7 @@ class GenimoWordpress extends stdClass {
         $registers = array();
         $rows = array();
         $i = 0;
+        $segmentId = LeadMobi::createSegment(MAUTIC_S_NAME_L, MAUTIC_S_SLUG_L, MAUTIC_S_DESC_L);
         foreach ($adSiteContacts as $row) {
             $query = "select (select meta_value as mensagem from wp_postmeta where post_id in(select ID from wp_posts where id = " . $row['ID'] . ") and meta_key = '_seq_num') as id,
                     (select meta_value as nome from wp_postmeta where post_id in(select ID from wp_posts where id = " . $row['ID'] . ") and meta_key = '_field_5') as nome,
@@ -43,7 +44,9 @@ class GenimoWordpress extends stdClass {
                 'meta_key' => '_is_exported',
                 'meta_value' => '1'
             );
-
+            //Lead from Site to Mautic
+            $contactId = LeadMobi::createContact($o[0]['nome'], "", $o[0]['email']);
+            $res = LeadMobi::addContactToSegment($contactId, $segmentId);
             $i++;
         }
         if (count($rows) > 0)
@@ -81,7 +84,8 @@ class GenimoWordpress extends stdClass {
         DB::query("delete from wp_posts where post_type = 'team_showcase_post'");
         $counter = DB::affectedRows();
         echo "WP_POST REMOVED:" . $counter . "\n";
-
+        //Create SEgment
+        $segmentId = LeadMobi::createSegment(MAUTIC_S_NAME_C, MAUTIC_S_SLUG_C, MAUTIC_S_DESC_C);
         foreach ($obj->sellers as $row) {
             DB::insert('wp_posts', array(
                 'post_author' => 1, //default for all
@@ -107,7 +111,9 @@ class GenimoWordpress extends stdClass {
                 'post_mime_type' => '', //Default no need
                 'comment_count' => '0'                                          //Default no need
             ));
-
+            //Add lead to Mautic Integration
+            $contactId = LeadMobi::createContact($row->nmPerson, "", $row->dsEmail);
+            $res = LeadMobi::addContactToSegment($contactId, $segmentId);
             //Get new Property Key from database
             $idSeller = DB::insertId();
             $metadata[] = GenimoWordpress::prepareMeta('fifu_image_url', $row->dsAvatarPath, $idSeller);

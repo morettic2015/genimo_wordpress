@@ -1,6 +1,7 @@
 {
     "require": {
         "slim/slim": "^3.0",
-        "sergeytsalkov/meekrodb": "*"
+        "sergeytsalkov/meekrodb": "*",
+        "mautic/api-library": "*"
     }
 }
