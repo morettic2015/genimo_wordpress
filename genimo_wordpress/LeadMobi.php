@@ -33,7 +33,7 @@ class LeadMobi extends stdClass {
      */
     public static function createContact($first, $last, $email) {
         $con = LeadMobi::connectMautic();
-        echo "<pre>";
+        //echo "<pre>";
         // var_dump($con);
         $contactApi = $con->api->newApi("contacts", $con->auth, MAUTIC_INSTANCE_API);
         $data = array(
@@ -55,7 +55,7 @@ class LeadMobi extends stdClass {
      * */
     public static function connectMautic() {
 
-        session_start();
+        @session_start();
 
         // ApiAuth->newAuth() will accept an array of Auth settings
         $settings = array(
@@ -78,7 +78,7 @@ class LeadMobi extends stdClass {
      * @Create Segment on Mautic and WP
      */
     public static function createSegment($name, $alias, $description) {
-        DB::debugMode();
+        //DB::debugMode();
         // echo "<pre>";
         $query = "SELECT post_parent FROM wp_posts WHERE guid = '$alias' and post_type = '_mtc_segment'";
         $mtc = DB::query($query);
