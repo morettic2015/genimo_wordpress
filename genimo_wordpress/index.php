@@ -10,6 +10,7 @@ use \Psr\Http\Message\ResponseInterface as Response;
 include_once './config.php';
 include_once './GenimoWordpress.php';
 include_once './LeadMobi.php';
+include_once './MetaSlider.php';
 //require 'GuiaSynchronize.php';
 //Init Objects
 $app = new \Slim\App([
@@ -30,8 +31,12 @@ $app->get('/property/{idCompany}/{idProperty}', function (Request $request, Resp
     // echo "INIT IMPORT IMAGE FROM PROPERTY" . $idProperty . "<br>";
     GenimoWordpress::copyImages($obj);
     //  echo "FINISH IMPORT IMAGE FROM PROPERTY" . $idProperty . "<br>";
+    MetaSlider::makeSliders($obj);
 });
-
+$app->get('/remove/{idCompany}/{idProperty}', function (Request $request, Response $response) use ($app) {
+    $idProperty = $request->getAttribute('idProperty');
+    $idCompany = $request->getAttribute('idCompany');
+    });
 $app->get('/sellers/{idCompany}', function (Request $request, Response $response) use ($app) {
     $idCompany = $request->getAttribute('idCompany');
     //echo "INIT IMPORT DATA FROM PROPERTY" . $idProperty . "<br>";

@@ -29,6 +29,7 @@ const MAUTIC_INSTANCE_API = "https://inbound.citywatch.com.br/api/";
 const MAUTIC_CALLBACK_URL = "http://frute.genimo.com.br/synchronize/leadmobi/";
 const MAUTIC_USER = "leadmobi";
 const MAUTIC_PASS = "leadmobi";
+const CD_IMOBILIARIA = 41;
 //Segmentos
 const MAUTIC_S_NAME_C = "Corretores";
 const MAUTIC_S_SLUG_C = "Corretores-Genimo-Wordpress";

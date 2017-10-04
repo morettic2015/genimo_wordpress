@@ -142,9 +142,21 @@ class WPSight_General {
                 'dashboard' => true,
                 'position' => 90
             ),
-            'vl_rent' => array(
+            'price' => array(
+                'id' => 'price',
+                'label' => __('Venda', 'wpcasa'),
+                'unit' => '',
+                'data' => false,
+                'description' => '',
+                'query_var' => 'price',
+                'data_compare' => 'LIKE',
+                'data_type' => 'CHAR',
+                'dashboard' => true,
+                'position' => 100
+            ),
+             'vl_rent' => array(
                 'id' => 'vl_rent',
-                'label' => __('Aluguel Anual', 'wpcasa'),
+                'label' => __('Aluguel', 'wpcasa'),
                 'unit' => '',
                 'data' => false,
                 'description' => '',
@@ -152,7 +164,7 @@ class WPSight_General {
                 'data_compare' => 'LIKE',
                 'data_type' => 'CHAR',
                 'dashboard' => true,
-                'position' => 90
+                'position' => 110
             ),
             'vl_season_rent' => array(
                 'id' => 'vl_season_rent',
@@ -164,7 +176,7 @@ class WPSight_General {
                 'data_compare' => 'LIKE',
                 'data_type' => 'CHAR',
                 'dashboard' => true,
-                'position' => 90
+                'position' => 120
             ),
             'vl_low_season_rent' => array(
                 'id' => 'vl_low_season_rent',
@@ -176,7 +188,19 @@ class WPSight_General {
                 'data_compare' => 'LIKE',
                 'data_type' => 'CHAR',
                 'dashboard' => true,
-                'position' => 90
+                'position' => 130
+            ),
+             'vl_low_season_rent' => array(
+                'id' => 'vl_low_season_rent',
+                'label' => __('Aluguel Baixa Temporada', 'wpcasa'),
+                'unit' => '',
+                'data' => false,
+                'description' => '',
+                'query_var' => 'vl_season_rent',
+                'data_compare' => 'LIKE',
+                'data_type' => 'CHAR',
+                'dashboard' => true,
+                'position' => 140
             )
         );
 
@@ -637,7 +661,7 @@ class WPSight_General {
             'bhd' => __('BHD => Bahraini Dinar', 'wpcasa'),
             'bnd' => __('BND => Brunei Dollar', 'wpcasa'),
             'bob' => __('BOB => Bolivian Boliviano', 'wpcasa'),
-            'brl' => __('BRL => Brazilian Real', 'wpcasa'),
+            'brl' => __('R$ => Brazilian Real', 'wpcasa'),
             'bwp' => __('BWP => Botswanan Pula', 'wpcasa'),
             'cad' => __('CAD => Canadian Dollar', 'wpcasa'),
             'chf' => __('CHF => Swiss Franc', 'wpcasa'),

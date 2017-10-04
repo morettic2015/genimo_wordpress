@@ -31,13 +31,28 @@ class GenimoWordpress extends stdClass {
             $o = DB::query($query);
             $registers[] = $o;
 
-            ///var_dump($o);
+            var_dump($o);
 
             /*  */
             //has been integrated
             if ($o[0]['stats'] == "1") {
+                echo "Already integrated";
                 continue;
             }
+
+            $nome = $o[0]['nome'];
+            $email = $o[0]['email'];
+            $phone = $o[0]['phone'];
+            $msg = $o[0]['msg'];
+            
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)){
+                echo $email." - invalid";
+                continue;//Invalid email
+            } 
+
+            $crulRet = LeadMobi::adSiteContact(CD_IMOBILIARIA,$nome, $email,$phone, $msg, null, null, 1);
+            //var_dump($crulRet);
+
             //Flag as exported
             $rows[] = array(
                 'post_id' => $row['ID'],
@@ -641,7 +656,10 @@ class GenimoWordpress extends stdClass {
             //echo $path . "\n";
             //if (!file_exists($path)) {
             //verify if file exists if exists skip continue
-            $pimgId = DB::query("SELECT ID FROM wp_posts where post_type = 'attachment' and guid like '%" . $img->nmFileName . "%'");
+            //Image Name
+            $imageNameForLike = str_replace("[", "", $img->nmFileName);
+            $imageNameForLike = str_replace("]", "", $imageNameForLike);
+            $pimgId = DB::query("SELECT ID FROM wp_posts where post_type = 'attachment' and guid like '%" . $imageNameForLike . "%'");
             $counter = DB::count();
             //var_dump($pimgId);
             //echo "\n Image Occurences:" . $counter;
