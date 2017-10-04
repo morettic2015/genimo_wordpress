@@ -84,14 +84,60 @@ class genimo_widget extends WP_Widget {
         $content .= "<b>Email:</b>";
         $content .= $_POST['dsemail'];
         $content .= "</p>";
+        $content .= "<b>Endereço:</b>";
+        $content .= $_POST['deaddress'];
+        $content .= "</p>";
+        return $content;
+    }
+
+    public function validateRecaptcha($key) {
+        if (isset($_POST['g-recaptcha-response'])) {
+            var_dump($_POST);
+            $url = 'https://www.google.com/recaptcha/api/siteverify';
+            $fields = array(
+                'response' => urlencode($_POST['g-recaptcha-response']),
+                'secret' => urlencode($key)
+            );
+            
+            $fields_string = "";
+
+            //url-ify the data for the POST
+            foreach ($fields as $key => $value) {
+                $fields_string .= $key . '=' . $value . '&';
+            }
+            rtrim($fields_string, '&');
+
+            //open connection
+            $ch = curl_init();
+
+            //set the url, number of POST vars, POST data
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_POST, count($fields));
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $fields_string);
+
+            //execute post
+            $result = curl_exec($ch);
+
+            //close connection
+            curl_close($ch);
+            $responseData = json_decode($result);
+            var_dump($responseData);
+            if ($responseData->success) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
     }
 
     public function createPost() {
-
+        $info = $this->createPostContent();
         $titleObj = $this->createPostTitle();
         $my_post = array(
-            'post_title' => $titleObj->type . '_' . $titleObj->cdMode . '_' . $_POST['nmperson'],
-            'post_content' => $_POST['deimovel'],
+            'post_title' => $_POST['nmperson'],
+            'post_content' => $info,
             'post_status' => 'publish',
             'post_type' => '_lead_listing',
             'post_author' => 1,
@@ -105,7 +151,7 @@ class genimo_widget extends WP_Widget {
             add_post_meta($postID, '_dsemail', $_POST['dsemail']);
             add_post_meta($postID, '_nuphone', $_POST['nuphone']);
             add_post_meta($postID, '_cdmode', $_POST['cdmode']);
-            add_post_meta($postID, '_listing_title', $titleObj->type . '_' . $titleObj->cdMode . '_' . $_POST['nmperson']);
+            add_post_meta($postID, '_listing_title', $_POST['vllon'] . '_' . $titleObj->cdMode . '_' . $_POST['nmperson']);
             add_post_meta($postID, '_idcategory', $_POST['idcategory']);
             add_post_meta($postID, '_details_1', $_POST['nrquartos']);
             add_post_meta($postID, '_details_2', $_POST['nrbath']);
@@ -131,16 +177,16 @@ class genimo_widget extends WP_Widget {
     }
 
     public function copyImages(&$images, $postID) {
-        var_dump($images);
+        //var_dump($images);
 
         $uploadDir = wp_upload_dir();
         $pathUpload = $uploadDir['path'] . "/";
-        var_dump($uploadDir);
+        //var_dump($uploadDir);
 
         foreach ($images as $attach) {
             //Get file Path
             $filePathFull = $pathUpload . $attach['name'];
-            echo $filePathFull;
+            //echo $filePathFull;
             //Upload file to wordpress current directory
             move_uploaded_file($attach['tmp_name'], $filePathFull);
             //Check for file type
@@ -176,16 +222,19 @@ class genimo_widget extends WP_Widget {
     public function widget($args, $instance) {
         @$title = apply_filters('widget_title', $instance['title']);
         @$cdImobiliaria = apply_filters('widget_cd', $instance['cdImobiliaria']);
-
+        @$gmaps_key = apply_filters('widget_maps_key', $instance['gmaps_key']);
+        @$captcha_key = apply_filters('widget_captcha_key', $instance['captcha_key']);
 // before and after widget arguments are defined by themes
         echo $args['before_widget'];
         if (!empty($title))
             echo @$args['before_title'] . $title . @$args['after_title'];
-
+        //echo $captcha_key; //die;
         //Form data was submitted
-        if (isset($_POST['nmperson'])) {
-            echo "Imóvel salvo com sucesso!<pre>";
-            var_dump($_POST);
+        
+        //var_dump($instance);
+        
+        if ($this->validateRecaptcha($captcha_key)) {
+            //var_dump($_POST);
             //var_dump();
             //var_dump($images);
             //Create Custom Post Type
@@ -193,8 +242,9 @@ class genimo_widget extends WP_Widget {
 
             $images = $this->sortFilesVet($_FILES['imgdestaque']);
             $this->copyImages($images, $postID);
-
-            echo $postID;
+            echo "<h1>Imóvel salvo com sucesso! ($postID)</h1>";
+            echo "<p>Agradecemos a sua confiança!</p>";
+            // echo ;
             //New post has been inserted
         } else {
 
@@ -280,8 +330,9 @@ class genimo_widget extends WP_Widget {
                     . '<div class="fb-textarea form-group field-deimovel"><label for="deimovel" class="fb-textarea-label">Descrição do imóvel</label><textarea type="textarea" class="form-control" name="deimovel" id="deimovel"></textarea></div><div class="">'
                     . '<h1 id="control-7495532">Fotos do Imóvel</h1></div><div class="fb-file form-group field-imgdestaque">'
                     . '<label for="imgdestaque" class="fb-file-label">Imagens do imóvel</label>'
-                    . '<input type="file" class="form-control" name="imgdestaque[]" multiple="true" id="imgdestaque[]"></div>'
-                    . '<div class="fb-button form-group field-btsubmitimovel">'
+                    . '<input type="file" class="form-control" name="imgdestaque[]" multiple="true" id="imgdestaque[]"></div><br>'
+                    . '<div class="g-recaptcha" data-sitekey="6LcfDzMUAAAAAHTvS38vkNc6NvjVtE-tOU7-1M_9"></div>'
+                    . '<div class="fb-button form-group field-btsubmitimovel"><br>'
                     . '<button type="button" class="btn btn-success" name="btsubmitimovel" style="success" id="btsubmitimovel">Enviar imóvel</button>'
                     . '</div></div></form>';
 
@@ -294,7 +345,8 @@ class genimo_widget extends WP_Widget {
             echo "<script>";
             include ROOT_PLUGIN . 'widget_genimo/formFunctions.js';
             echo "</script>";
-            echo '<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCkJEjT73RmsOw1Ldy3S9RbWg_-PDRh8zE&libraries=places&callback=initAutocomplete" async defer></script>';
+            echo '<script src="https://maps.googleapis.com/maps/api/js?key='.$gmaps_key.'&libraries=places&callback=initAutocomplete" async defer></script>';
+            echo "<script src='https://www.google.com/recaptcha/api.js'></script>";
         }
         echo $args['after_widget'];
     }
@@ -311,6 +363,16 @@ class genimo_widget extends WP_Widget {
         } else {
             $cdImobiliaria = __('Codigo Imobiliaria', 'genimo_widget_domain');
         }
+        if (isset($instance['gmaps_key'])) {
+            $gmaps_key = $instance['gmaps_key'];
+        } else {
+            $gmaps_key = __('Google Maps API KEY', 'genimo_widget_domain');
+        }
+        if (isset($instance['captcha_key'])) {
+            $captcha_key = $instance['captcha_key'];
+        } else {
+            $captcha_key = __('Google RECAPTCHA SECRET', 'genimo_widget_domain');
+        }
         // Widget admin form
         ?>
         <p>
@@ -318,6 +380,10 @@ class genimo_widget extends WP_Widget {
             <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo esc_attr($title); ?>" />
             <label for="<?php echo $this->get_field_id('cdImobiliaria'); ?>"><?php _e('Codigo Imobiliaria:'); ?></label>
             <input class = "widefat" id = "<?php echo $this->get_field_id('cdImobiliaria'); ?>" name = "<?php echo $this->get_field_name('cdImobiliaria'); ?>" type = "text" value = "<?php echo esc_attr($cdImobiliaria); ?>" />
+            <label for="<?php echo $this->get_field_id('gmaps_key'); ?>"><?php _e('Google Maps KEY:'); ?></label>
+            <input class = "widefat" id = "<?php echo $this->get_field_id('gmaps_key'); ?>" name = "<?php echo $this->get_field_name('gmaps_key'); ?>" type = "text" value = "<?php echo esc_attr($gmaps_key); ?>" />
+            <label for="<?php echo $this->get_field_id('captcha_key'); ?>"><?php _e('Google Recaptcha Key KEY:'); ?></label>
+            <input class = "widefat" id = "<?php echo $this->get_field_id('captcha_key'); ?>" name = "<?php echo $this->get_field_name('captcha_key'); ?>" type = "text" value = "<?php echo esc_attr($captcha_key); ?>" />
         </p>
         <?php
     }
@@ -327,6 +393,8 @@ class genimo_widget extends WP_Widget {
         $instance = array();
         $instance['title'] = (!empty($new_instance['title']) ) ? strip_tags($new_instance['title']) : '';
         $instance['cdImobiliaria'] = (!empty($new_instance['cdImobiliaria']) ) ? strip_tags($new_instance['cdImobiliaria']) : '';
+        $instance['gmaps_key'] = (!empty($new_instance['gmaps_key']) ) ? ($new_instance['gmaps_key']) : '';
+        $instance['captcha_key'] = (!empty($new_instance['captcha_key']) ) ? ($new_instance['captcha_key']) : '';
         return $instance;
     }
 
@@ -363,10 +431,38 @@ function create_lead_listing() {
         ),
         'public' => true,
         'has_archive' => true,
+        'show_ui' => true,
+        'show_in_menu' => true,
+        'query_var' => true,
+        'has_archive' => true,
         'rewrite' => array('slug' => 'leads_listing'),
+        'supports' => array('title', 'editor', 'author', 'thumbnail', 'excerpt', 'comments', 'meta')
             )
     );
 }
 
 // Hooking up our function to theme setup
 add_action('init', 'create_lead_listing');
+
+/**
+ */
+function lead_listing_help_tab() {
+
+    $screen = get_current_screen();
+
+    // Return early if we're not on the book post type.
+    if ('_lead_listing' != $screen->post_type)
+        return;
+
+    // Setup help tab args.
+    $args = array(
+        'id' => '1234123', //unique id for the tab
+        'title' => 'Leadmobi Help', //unique visible title for the tab
+        'content' => '<h3>Leadmobi</h3><p>Visite nosso site <a href="https://leadmobi.com.br" target=_blank>Leadmobi</a> para obter suporte</p><p>Desenvolvido por: <a href=https://morettic.com.br target=_blank>Morettic</a>', //actual help text
+    );
+
+    // Add the help tab.
+    $screen->add_help_tab($args);
+}
+
+add_action('admin_head', 'lead_listing_help_tab');
