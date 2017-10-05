@@ -148,3 +148,12 @@ function lead_listing_help_tab() {
 
 add_action('admin_head', 'lead_listing_help_tab');
 
+/**
+ * @Disable add new on Wordpress
+ */
+function disable_create_lead_listing() {
+    global $wp_post_types;
+    $wp_post_types['_lead_listing']->cap->create_posts = 'do_not_allow';
+}
+add_action('init','disable_create_lead_listing');
+

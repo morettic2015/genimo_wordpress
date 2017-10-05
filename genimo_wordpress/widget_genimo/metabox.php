@@ -42,14 +42,17 @@ function _genimo_rende_metabox() {
     //var_dump($user);die;
 //  $post->get
     ?>
+    
     <h1>
         Dados do Contato
     </h1>
     <fieldset>
         <div>
             <h4>
-                Tipo do Lead:<b> <?php echo $cdiam; ?></b>
+                Tipo do Lead:
             </h4>
+            <a href="#" class="ui-btn ui-btn-inline ui-icon-delete ui-btn-icon-left"><?php echo $cdiam; ?></a>
+
         </div>
         <hr>   
         <div>
