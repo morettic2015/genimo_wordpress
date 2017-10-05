@@ -24,8 +24,8 @@ var GenimoForm = function () {
             element.style.borderColor = "red";
             element.style.border = "thick solid";
         } else {
-            element.style.borderColor = "green";
-            element.style.border = "thick solid";
+            element.style.borderColor = "black";
+            element.style.border = "none";
         }
         // alert(element.value);
     }
@@ -65,7 +65,13 @@ var GenimoForm = function () {
         this.validateField('nrbath', g);
         this.validateField('deaddress', h);
         this.validateField('deimovel', i);
-
+        this.validateField('vltotalarea', i);
+        this.validateField('vlprice', i);
+        
+        if(grecaptcha.getResponse() === ""){
+            alert('Verifique o captcha e tente novamente');
+            this.isValid = false;
+        }
         if (!this.isValid) {
             //ons.notification.alert(this.msgError);
         } else {
