@@ -44,15 +44,14 @@ class GenimoWordpress extends stdClass {
             $email = $o[0]['email'];
             $phone = $o[0]['phone'];
             $msg = $o[0]['msg'];
-            
-            if (!filter_var($email, FILTER_VALIDATE_EMAIL)){
-                echo $email." - invalid";
-                continue;//Invalid email
-            } 
 
-            $crulRet = LeadMobi::adSiteContact(CD_IMOBILIARIA,$nome, $email,$phone, $msg, null, null, 1);
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                echo $email . " - invalid";
+                continue; //Invalid email
+            }
+
+            $crulRet = LeadMobi::adSiteContact(CD_IMOBILIARIA, $nome, $email, $phone, $msg, null, null, 1);
             //var_dump($crulRet);
-
             //Flag as exported
             $rows[] = array(
                 'post_id' => $row['ID'],
@@ -75,7 +74,11 @@ class GenimoWordpress extends stdClass {
         $json = file_get_contents($urlProperty);
         $obj = json_decode($json); //var_dump($obj);die();
         foreach ($obj as $r) {
-            GenimoWordpress::syncProperty($idCompany, $r->idProperty);
+            $r1 = GenimoWordpress::syncProperty($idCompany, $r->idProperty);
+            GenimoWordpress::copyImages($r1);
+            //  echo "FINISH IMPORT IMAGE FROM PROPERTY" . $idProperty . "<br>";
+            MetaSlider::makeSliders($r1);
+            $r1 = null;
         }
     }
 
@@ -332,12 +335,12 @@ class GenimoWordpress extends stdClass {
         $result = DB::queryFirstRow("SELECT term_id FROM wp_terms WHERE slug=%s", $term_slug);
         $term_id = $result['term_id'];
         //Get Term Relatioship ID
-        $result = DB::queryFirstRow("SELECT term_taxonomy_id FROM imobiliaria_com.wp_term_taxonomy where term_id=%s", $term_id);
+        $result = DB::queryFirstRow("SELECT term_taxonomy_id FROM wp_term_taxonomy where term_id=%s", $term_id);
         $term_taxonomy_id = $result['term_taxonomy_id'];
         if (empty($term_taxonomy_id))
             return;
         //Remove relatioships not used anymore
-        DB::query("delete FROM imobiliaria_com.wp_term_relationships where object_id=$idProperty and term_taxonomy_id =$term_taxonomy_id");
+        DB::query("delete FROM wp_term_relationships where object_id=$idProperty and term_taxonomy_id =$term_taxonomy_id");
         $counter = DB::affectedRows();
         //echo "\n wp_term_relationships".$counter.'\n';
     }
@@ -579,7 +582,7 @@ class GenimoWordpress extends stdClass {
         //Retrieve taxionomy from term to associate with post
         if (!isset($term_tax_id)) {
 
-            $term_tax_id = DB::queryOneField('term_taxonomy_id', 'SELECT term_taxonomy_id FROM imobiliaria_com.wp_term_taxonomy where term_id = ' . $term_id);
+            $term_tax_id = DB::queryOneField('term_taxonomy_id', 'SELECT term_taxonomy_id FROM wp_term_taxonomy where term_id = ' . $term_id);
             //echo $term_tax_id;
         }
         //Query One Field to see if theres already a relationship
@@ -629,13 +632,13 @@ class GenimoWordpress extends stdClass {
      * 10) Vincula a imagem sem o parent com o post pelo thumbbail
      * 
      * 
-     * SELECT * FROM imobiliaria_com.wp_postmeta where meta_key = '_thumbnail_id '
+     * SELECT * FROM wp_postmeta where meta_key = '_thumbnail_id '
      * 
-     * SELECT * FROM imobiliaria_com.wp_term_relationships where object_id = 318771;
+     * SELECT * FROM wp_term_relationships where object_id = 318771;
      *
-     * SELECT distinct meta_key FROM imobiliaria_com.wp_postmeta;
+     * SELECT distinct meta_key FROM wp_postmeta;
      *
-     * delete FROM imobiliaria_com.wp_postmeta where meta_key = '_listing_id';
+     * delete FROM wp_postmeta where meta_key = '_listing_id';
      *
      * select * from wp_term_taxonomy where term_taxonomy_id in (1123,1149)
      *
@@ -646,7 +649,7 @@ class GenimoWordpress extends stdClass {
         //echo $property->idPropertyDB . "\n";
 
         $images = $property->property->images;
-        //var_dump($images);
+        var_dump($images);
 
         $hasSpot = false;
         $imgIds = [];
@@ -661,9 +664,9 @@ class GenimoWordpress extends stdClass {
             $imageNameForLike = str_replace("]", "", $imageNameForLike);
             $pimgId = DB::query("SELECT ID FROM wp_posts where post_type = 'attachment' and guid like '%" . $imageNameForLike . "%'");
             $counter = DB::count();
-            //var_dump($pimgId);
-            //echo "\n Image Occurences:" . $counter;
-            //echo $pimgId['ID'];
+            var_dump($pimgId);
+            echo "\n Image Occurences:" . $counter;
+            echo $pimgId['ID'];
             if ($counter > 0) {
                 ///echo "\n";
                 //echo $img->nmFileName . ' Exists\n';
@@ -672,7 +675,7 @@ class GenimoWordpress extends stdClass {
             }
 
             $urlImg = $img->dsImagePath . "/" . $img->nmFileName;
-            //echo $urlImg . "\n";
+          //  echo $urlImg . "\n";
 
             $file = file_get_contents($urlImg);
             $url = REST_MEDIA_URL;
@@ -693,11 +696,13 @@ class GenimoWordpress extends stdClass {
             ]);
             $result = null;
             $result = curl_exec($ch);
+            
+           // var_dump($result);
             curl_close($ch);
             // echo "\n----------------------------------------";
             $imagem = json_decode($result);
 
-            //var_dump($imagem);
+          //  var_dump($imagem);
             $imgIds[] = $imagem->id;
         }
         if (count($imgIds) > 0) {
@@ -834,7 +839,7 @@ class GenimoWordpress extends stdClass {
         return $typeOfBusiness;
     }
 
-    //update imobiliaria_com.wp_postmeta  set meta_value=%s where meta_key =%s and post_id =$i;
+    //update wp_postmeta  set meta_value=%s where meta_key =%s and post_id =$i;
     public static function updatePostMeta($ID, $meta_value, $meta_key) {
         $idMetaKeyLocal = DB::queryFirstRow("select meta_id from wp_postmeta where meta_key = '$meta_key' and post_id = '$ID'");
         if (empty($idMetaKeyLocal['meta_id'])) {
@@ -845,7 +850,7 @@ class GenimoWordpress extends stdClass {
             ));
         } else {
             //if()
-            DB::query("update imobiliaria_com.wp_postmeta  set meta_value=%s where meta_key =%s and post_id =%i", $meta_value, $meta_key, $ID);
+            DB::query("update wp_postmeta  set meta_value=%s where meta_key =%s and post_id =%i", $meta_value, $meta_key, $ID);
         }
     }
 
@@ -864,7 +869,7 @@ function my_error_handler($params) {
 /**
   Manual teste to be run after all
 
-  -- SELECT * FROM imobiliaria_com.wp_postmeta where meta_key = '_details_1'
+  -- SELECT * FROM wp_postmeta where meta_key = '_details_1'
 
   -- select max(ID) from wp_posts
 
