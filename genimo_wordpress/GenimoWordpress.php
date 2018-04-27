@@ -149,15 +149,22 @@ class GenimoWordpress extends stdClass {
     public static function syncProperty($idCompany, $idProperty) {
         DB::debugMode();
         // DB::startTransaction();
-        echo "<pre>";
+        //echo "<pre>";
         //echo "DAO INIT" . "<br>";
         //Read from url
         $urlProperty = "https://genimo.com.br/api/site/property/" . $idCompany . "/" . $idProperty;
-        //Get JSON
-        $json = file_get_contents($urlProperty);
-        //echo  $json;
+
+       // echo $urlProperty;
+        //Get JSON $yourString );
+        $jso1 = getdataFromURL($urlProperty);
+         //$jso1 = '{"foo": "bar", "cool": "attr"}';
+        //echo $jso1;
         //
-        $obj = json_decode($json); //var_dump($obj);die();
+       // $str = str_replace(array("\r","\n"), "", $jso1);
+        //$jso1 = nl2br($str);
+        $obj = json_decode(($jso1));
+        var_dump($obj);
+       // die();
         //dum memnory
         //var_dump($obj);
         //die;
@@ -675,7 +682,7 @@ class GenimoWordpress extends stdClass {
             }
 
             $urlImg = $img->dsImagePath . "/" . $img->nmFileName;
-          //  echo $urlImg . "\n";
+            //  echo $urlImg . "\n";
 
             $file = file_get_contents($urlImg);
             $url = REST_MEDIA_URL;
@@ -696,13 +703,13 @@ class GenimoWordpress extends stdClass {
             ]);
             $result = null;
             $result = curl_exec($ch);
-            
-           // var_dump($result);
+
+            // var_dump($result);
             curl_close($ch);
             // echo "\n----------------------------------------";
             $imagem = json_decode($result);
 
-          //  var_dump($imagem);
+            //  var_dump($imagem);
             $imgIds[] = $imagem->id;
         }
         if (count($imgIds) > 0) {
@@ -894,4 +901,27 @@ function makeSlug($string) {
 
 function tirarAcentos($string) {
     return preg_replace(array("/(á|à|ã|â|ä)/", "/(Á|À|Ã|Â|Ä)/", "/(é|è|ê|ë)/", "/(É|È|Ê|Ë)/", "/(í|ì|î|ï)/", "/(Í|Ì|Î|Ï)/", "/(ó|ò|õ|ô|ö)/", "/(Ó|Ò|Õ|Ô|Ö)/", "/(ú|ù|û|ü)/", "/(Ú|Ù|Û|Ü)/", "/(ñ)/", "/(Ñ)/", "/(ç)/", "/(Ç)/"), explode(" ", "a A e E i I o O u U n N c C"), $string);
+}
+
+function getdataFromURL($url, $args = false) {
+    $options = array(
+        CURLOPT_RETURNTRANSFER => true, // return web page
+        CURLOPT_HEADER => false, // don't return headers
+        CURLOPT_FOLLOWLOCATION => true, // follow redirects
+        CURLOPT_MAXREDIRS => 10, // stop after 10 redirects
+        CURLOPT_ENCODING => "ISO-8859-1", // handle compressed
+        CURLOPT_USERAGENT => "test", // name of client
+        CURLOPT_AUTOREFERER => true, // set referrer on redirect
+        CURLOPT_CONNECTTIMEOUT => 120, // time-out on connect
+        CURLOPT_TIMEOUT => 120, // time-out on response
+    );
+
+    $ch = curl_init($url);
+    curl_setopt_array($ch, $options);
+
+    $content = curl_exec($ch);
+
+    curl_close($ch);
+
+    return $content;
 }

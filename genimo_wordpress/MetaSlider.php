@@ -50,7 +50,7 @@ class MetaSlider {
                 'post_modified_gmt' => $date, //Just now
                 'post_content_filtered' => '', //No need for 
                 'post_parent' => $property->idPropertyDB, //Parent one
-                'guid' => "https://frute.genimo.com.br/?post_type=ml-slider&#038;p=" . $property->idPropertyDB, //Guid Url for Property
+                'guid' => "https://ruteimoveis.com/?post_type=ml-slider&#038;p=" . $property->idPropertyDB, //Guid Url for Property
                 'menu_order' => '0', //Default no need
                 'post_type' => "ml-slider", //Slider Parent
                 'post_mime_type' => "", //Default no need

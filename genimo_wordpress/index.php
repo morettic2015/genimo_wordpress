@@ -1,5 +1,5 @@
 <?php
-
+header('Content-Type: text/html; charset=utf-8');
 require './vendor/autoload.php';
 
 //header("Access-Control-Allow-Origin: *");
@@ -25,8 +25,12 @@ $app = new \Slim\App([
 $app->get('/property/{idCompany}/{idProperty}', function (Request $request, Response $response) use ($app) {
     $idProperty = $request->getAttribute('idProperty');
     $idCompany = $request->getAttribute('idCompany');
-    //echo "INIT IMPORT DATA FROM PROPERTY" . $idProperty . "<br>";
+   
+
+    //return $newResponse;
+    echo "INIT IMPORT DATA FROM PROPERTY" . $idProperty . "<br>";
     $obj = GenimoWordpress::syncProperty($idCompany, $idProperty);
+    //die();
     // echo "FINISH IMPORT DATA FROM PROPERTY" . $idProperty . "<br>";
     // echo "INIT IMPORT IMAGE FROM PROPERTY" . $idProperty . "<br>";
     GenimoWordpress::copyImages($obj);
