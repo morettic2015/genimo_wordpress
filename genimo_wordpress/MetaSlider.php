@@ -4,6 +4,8 @@
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
+ * a:28:{i:0;b:0;s:4:"type";s:4:"flex";s:5:"width";s:4:"1185";s:6:"height";s:3:"400";s:6:"effect";s:4:"fade";s:5:"theme";s:7:"default";s:5:"links";s:4:"true";s:10:"navigation";s:4:"true";s:8:"autoPlay";s:4:"true";s:9:"smartCrop";s:4:"true";s:14:"carouselMargin";s:1:"5";s:10:"hoverPause";s:4:"true";s:5:"delay";s:4:"3000";s:14:"animationSpeed";s:3:"600";s:9:"direction";s:10:"horizontal";s:6:"easing";s:6:"linear";s:8:"prevText";s:1:"<";s:8:"nextText";s:1:">";s:8:"cssClass";s:0:"";s:8:"printCss";s:4:"true";s:7:"printJs";s:4:"true";s:10:"noConflict";s:4:"true";s:9:"fullWidth";s:5:"false";s:7:"reverse";s:5:"false";s:6:"random";s:5:"false";s:12:"smoothHeight";s:5:"false";s:6:"center";s:5:"false";s:12:"carouselMode";s:5:"false";}
+ * a:28:{i:0;b:0;s:4:"type";s:4:"flex";s:5:"width";s:4:"1185";s:6:"height";s:3:"400";s:6:"effect";s:4:"fade";s:5:"theme";s:7:"default";s:5:"links";s:4:"true";s:10:"navigation";s:4:"true";s:8:"autoPlay";s:4:"true";s:9:"smartCrop";s:4:"true";s:14:"carouselMargin";s:1:"5";s:10:"hoverPause";s:4:"true";s:5:"delay";s:4:"3000";s:14:"animationSpeed";s:3:"600";s:9:"direction";s:10:"horizontal";s:6:"easing";s:6:"linear";s:8:"prevText";s:1:"<";s:8:"nextText";s:1:">";s:8:"cssClass";s:0:"";s:8:"printCss";s:4:"true";s:7:"printJs";s:4:"true";s:10:"noConflict";s:4:"true";s:9:"fullWidth";s:5:"false";s:7:"reverse";s:5:"false";s:6:"random";s:5:"false";s:12:"smoothHeight";s:5:"false";s:6:"center";s:5:"false";s:12:"carouselMode";s:5:"false";}
  */
 
 /**
@@ -86,7 +88,7 @@ class MetaSlider {
             DB::insert('wp_postmeta', array(
                 'post_id' => $sliderMeta->sliderId, // auto incrementing column
                 'meta_key' => 'ml-slider_settings',
-                'meta_value' => 'a:35:{s:4:"type";s:4:"flex";s:6:"random";s:5:"false";s:8:"cssClass";s:0:"";s:8:"printCss";s:4:"true";s:7:"printJs";s:4:"true";s:5:"width";s:4:"1024";s:6:"height";s:3:"500";s:3:"spw";s:1:"7";s:3:"sph";s:1:"5";s:5:"delay";s:4:"3000";s:6:"sDelay";s:2:"30";s:7:"opacity";s:1:"0";s:10:"titleSpeed";s:3:"500";s:6:"effect";s:4:"fade";s:10:"navigation";s:4:"true";s:5:"links";s:4:"true";s:10:"hoverPause";s:4:"true";s:5:"theme";s:7:"default";s:9:"direction";s:10:"horizontal";s:7:"reverse";s:5:"false";s:14:"animationSpeed";s:3:"600";s:8:"prevText";s:1:"<";s:8:"nextText";s:1:">";s:6:"slices";s:2:"15";s:6:"center";s:4:"true";s:9:"smartCrop";s:4:"true";s:12:"carouselMode";s:5:"false";s:14:"carouselMargin";s:1:"5";s:6:"easing";s:6:"linear";s:8:"autoPlay";s:5:"true";s:11:"thumb_width";i:150;s:12:"thumb_height";i:100;s:9:"fullWidth";s:5:"false";s:10:"noConflict";s:5:"false";s:12:"smoothHeight";s:5:"false";}'
+                'meta_value' => 'a:35:{s:4:"type";s:4:"flex";s:6:"random";s:5:"false";s:8:"cssClass";s:0:"";s:8:"printCss";s:4:"true";s:7:"printJs";s:4:"true";s:5:"width";s:4:"1185";s:6:"height";s:3:"400";s:3:"spw";s:1:"7";s:3:"sph";s:1:"5";s:5:"delay";s:4:"3000";s:6:"sDelay";s:2:"30";s:7:"opacity";s:1:"0";s:10:"titleSpeed";s:3:"500";s:6:"effect";s:4:"fade";s:10:"navigation";s:4:"true";s:5:"links";s:4:"true";s:10:"hoverPause";s:4:"true";s:5:"theme";s:7:"default";s:9:"direction";s:10:"horizontal";s:7:"reverse";s:5:"false";s:14:"animationSpeed";s:3:"600";s:8:"prevText";s:1:"<";s:8:"nextText";s:1:">";s:6:"slices";s:2:"15";s:6:"center";s:4:"true";s:9:"smartCrop";s:4:"true";s:12:"carouselMode";s:5:"false";s:14:"carouselMargin";s:1:"5";s:6:"easing";s:6:"linear";s:8:"autoPlay";s:5:"true";s:11:"thumb_width";i:150;s:12:"thumb_height";i:100;s:9:"fullWidth";s:5:"false";s:10:"noConflict";s:5:"false";s:12:"smoothHeight";s:5:"false";}'
             ));
             //
             $sliderMeta->postMeta = array();
@@ -108,7 +110,7 @@ class MetaSlider {
                         'post_date_gmt' => $date, //just now its new
                         'post_content' => "", //Get as String UTF 8
                         'post_title' => "SLIDER_" . utf8_encode($property->property->nmPropertySite), //Get as String UTF 8
-                        'post_name' => $img->nmFileName, //Get as String UTF 8
+                        'post_name' =>  utf8_encode($img->nmFileName), //Get as String UTF 8
                         'post_excerpt' => "", //Default Empty
                         'post_status' => 'publish', //Publish online / Trash offline
                         'comment_status' => 'closed', //Comment closed for all default
@@ -140,7 +142,7 @@ class MetaSlider {
                     $sliderMeta->postMeta[] = array(
                         'post_id' => $idSlide,
                         'meta_key' => '_wp_attachment_image_alt',
-                        'meta_value' => $property->property->nmPropertySite
+                        'meta_value' => utf8_encode($property->property->nmPropertySite)
                     );
                     $sliderMeta->postMeta[] = array(
                         'post_id' => $idSlide,

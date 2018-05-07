@@ -16,22 +16,22 @@ global $listing;
 
         <?php do_action('wpsight_listing_single_image_before'); ?>
 
-
-        <?php
-        /**
-         * @Meta Key
-         */
-        $the_query = new WP_Query(array("post_type" => "ml-slider", "meta_key" => "_listing_slider", "meta_value" => $listing->ID));
-        $cached = get_the_ID();
-        //echo $cached;
-        if ($the_query->have_posts()) {
-            $the_query->the_post();
-            $sliderId = get_the_ID();
-            echo do_shortcode("[metaslider id='" . $sliderId . "']");
-            $listing->ID = $cached;
-        }
-        ?>
-
+        <center>
+            <?php
+            /**
+             * @Meta Key
+             */
+            $the_query = new WP_Query(array("post_type" => "ml-slider", "meta_key" => "_listing_slider", "meta_value" => $listing->ID));
+            $cached = get_the_ID();
+            //echo $cached;
+            if ($the_query->have_posts()) {
+                $the_query->the_post();
+                $sliderId = get_the_ID();
+                echo do_shortcode("[metaslider id='" . $sliderId . "']");
+                $listing->ID = $cached;
+            }
+            ?>
+        </center>
         <?php do_action('wpsight_listing_single_image_after'); ?>
 
     </div><!-- .wpsight-listing-section -->

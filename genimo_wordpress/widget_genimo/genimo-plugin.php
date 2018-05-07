@@ -14,6 +14,7 @@ define('ROOT_PLUGIN', dirname(__DIR__) . '/');
 include ROOT_PLUGIN . 'widget_genimo/widget_lead_listing.php';
 include ROOT_PLUGIN . 'widget_genimo/lead_user.php';
 include ROOT_PLUGIN . 'widget_genimo/metabox.php';
+include ROOT_PLUGIN . 'widget_genimo/widget_lead_contact.php';
 
 //define('GENIMO_URL', $current_url);
 // Register and load the widget
@@ -22,6 +23,7 @@ function genimo_load_widget() {
 }
 
 add_action('widgets_init', 'genimo_load_widget');
+add_action('widgets_init', create_function('', 'return register_widget("WidgetContacts");'));
 
 // Creating the widget 
 
@@ -156,4 +158,27 @@ function disable_create_lead_listing() {
     $wp_post_types['_lead_listing']->cap->create_posts = 'do_not_allow';
 }
 add_action('init','disable_create_lead_listing');
+
+
+/**
+ * Register a custom menu page.
+ */
+function wp_leads_imobiliarios(){
+    add_menu_page( 
+        __( 'Contatos imobiliários', 'textdomain' ),
+        'Contatos imobiliários',
+        'manage_options',
+        'leads_imobiliarios',
+        'leads_imobiliarios',
+        6
+    ); 
+}
+add_action( 'admin_menu', 'wp_leads_imobiliarios' );
+ 
+/**
+ * Display a custom menu page
+ */
+function leads_imobiliarios(){
+    include dirname(__FILE__) . '/grid.php';
+}
 

@@ -24,6 +24,8 @@ global $listing;
 
             <?php wpsight_get_template('listing-single-title.php'); ?>
 
+            <?php the_widget('WidgetContacts', $instance, $listing); ?>
+            
             <?php wpsight_get_template('listing-single-image.php'); ?>
 
             <?php wpsight_get_template('listing-single-info.php'); ?>
@@ -35,6 +37,8 @@ global $listing;
             <?php wpsight_get_template('listing-single-features.php'); ?>
 
             <?php wpsight_get_template('listing-single-location.php'); ?>
+            
+            <?php wpsight_get_template('listing-single-comments.php'); ?>
 
             <?php //wpsight_get_template('listing-single-agent.php'); ?>
 

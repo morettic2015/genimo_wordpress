@@ -622,7 +622,7 @@ class GenimoWordpress extends stdClass {
         $dsAddressMap = str_replace(".", "", $dsAddress);
         $dsAddressMap = str_replace(",", "", $dsAddressMap);
         $dsAddressMap = str_replace("-", "", $dsAddressMap);
-        return $dsAddressMap;
+        return utf8_decode($dsAddressMap);
     }
 
     /**
