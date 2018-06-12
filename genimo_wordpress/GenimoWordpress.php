@@ -154,17 +154,18 @@ class GenimoWordpress extends stdClass {
         //Read from url
         $urlProperty = "https://genimo.com.br/api/site/property/" . $idCompany . "/" . $idProperty;
 
-       // echo $urlProperty;
+        echo $urlProperty;
         //Get JSON $yourString );
         $jso1 = getdataFromURL($urlProperty);
-         //$jso1 = '{"foo": "bar", "cool": "attr"}';
-        //echo $jso1;
+        //$jso1 = '{"foo": "bar", "cool": "attr"}';
+        echo $jso1;
         //
-       // $str = str_replace(array("\r","\n"), "", $jso1);
+        // $str = str_replace(array("\r","\n"), "", $jso1);
         //$jso1 = nl2br($str);
+        echo "<pre>";
         $obj = json_decode(($jso1));
-        var_dump($obj);
-       // die();
+        // var_dump($obj);die;
+        // die();
         //dum memnory
         //var_dump($obj);
         //die;
@@ -819,27 +820,34 @@ class GenimoWordpress extends stdClass {
 
     public static function getTypeOfBusiness($property) {
         $typeOfBusiness = new stdClass();
-        if ($property->cdMode == 1) {
-            $typeOfBusiness->vlPrice = $property->vlRental;
-            $typeOfBusiness->tpPriceOffer = "rent";
-            $typeOfBusiness->tpPricePeriod = "rental_period_1";
-        } else if ($property->cdMode == 2) {
-            $typeOfBusiness->vlPrice = $property->vlSale;
-            $typeOfBusiness->tpPriceOffer = "sale";
-            $typeOfBusiness->tpPricePeriod = "sale";
-        } else if ($property->cdMode == 4) {
-            $typeOfBusiness->vlPrice = $property->vlSeasonRent;
-            $typeOfBusiness->tpPriceOffer = "rent";
-            $typeOfBusiness->tpPricePeriod = "rental_period_2";
-        } else if ($property->cdMode == 5) {
-            $typeOfBusiness->typeOfBusiness->vlPrice = $property->vlLowSeasonRent;
-            $typeOfBusiness->tpPriceOffer = "rent";
-            $typeOfBusiness->tpPricePeriod = "rental_period_3";
-        } else {
-            $typeOfBusiness->vlPrice = "";
-            $typeOfBusiness->tpPriceOffer = "sale";
-            $typeOfBusiness->tpPricePeriod = "sale";
+        //var_dump($property);die;
+        switch ($property->cdMode) {
+            case 1:
+                $typeOfBusiness->vlPrice = $property->vlRental;
+                $typeOfBusiness->tpPriceOffer = "rent";
+                $typeOfBusiness->tpPricePeriod = "rental_period_1";
+                break;
+            case 2:
+                $typeOfBusiness->vlPrice = $property->vlSale;
+                $typeOfBusiness->tpPriceOffer = "sale";
+                $typeOfBusiness->tpPricePeriod = "sale";
+                break;
+            case 4:
+                $typeOfBusiness->vlPrice = $property->vlSeasonRent;
+                $typeOfBusiness->tpPriceOffer = "rent";
+                $typeOfBusiness->tpPricePeriod = "rental_period_2";
+                break;
+            case 5:
+                $typeOfBusiness->typeOfBusiness->vlPrice = $property->vlLowSeasonRent;
+                $typeOfBusiness->tpPriceOffer = "rent";
+                $typeOfBusiness->tpPricePeriod = "rental_period_3";
+            default:
+                $typeOfBusiness->vlPrice = "";
+                $typeOfBusiness->tpPriceOffer = "sale";
+                $typeOfBusiness->tpPricePeriod = "sale";
+                break;
         }
+
 
         //var_dump($typeOfBusiness);
 

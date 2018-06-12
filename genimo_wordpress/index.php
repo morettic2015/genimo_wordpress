@@ -28,7 +28,7 @@ $app->get('/property/{idCompany}/{idProperty}', function (Request $request, Resp
    
 
     //return $newResponse;
-    echo "INIT IMPORT DATA FROM PROPERTY" . $idProperty . "<br>";
+    //echo "INIT IMPORT DATA FROM PROPERTY" . $idProperty . "<br>";
     $obj = GenimoWordpress::syncProperty($idCompany, $idProperty);
     //die();
     // echo "FINISH IMPORT DATA FROM PROPERTY" . $idProperty . "<br>";

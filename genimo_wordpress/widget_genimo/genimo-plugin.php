@@ -172,13 +172,21 @@ function wp_leads_imobiliarios(){
         'leads_imobiliarios',
         6
     ); 
+    add_menu_page( 
+        __( 'Importar Imóveis do Genimo', 'textdomain' ),
+        'Importar Imóveis',
+        'manage_options',
+        'imo_import',
+        'imo_import',
+        6
+    ); 
 }
 add_action( 'admin_menu', 'wp_leads_imobiliarios' );
- 
+
+
 /**
  * Display a custom menu page
  */
-function leads_imobiliarios(){
-    include dirname(__FILE__) . '/grid.php';
+function imo_import(){
+    include dirname(__FILE__) . '/import.php';
 }
-
