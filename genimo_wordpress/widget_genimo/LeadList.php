@@ -202,12 +202,12 @@ class LeadList extends WP_List_Table {
             foreach ($result as $rt) {
                 // var_dump($rt);
                 $ret = wp_mail($rt->meta_value, $_POST['subject'], $_POST['mensagem'], $headers);
-               // var_dump($ret);
+                // var_dump($ret);
                 echo '<div class="notice notice-success is-dismissible"> 
-                    <p><strong>Email enviado aos contato:<code>'.$rt->meta_value.'</code></strong></p>
+                    <p><strong>Email enviado aos contato:<code>' . $rt->meta_value . '</code></strong></p>
                  </div>';
             }
-         
+
             // var_dump($result);
         //
         }
@@ -250,16 +250,18 @@ class LeadList extends WP_List_Table {
             //$post_meta = get_post_meta($c1->ID);
             //var_dump($post_meta);
             // var_dump($c1);die;
+
+            $whats = "<a target='blank' href='https://api.whatsapp.com/send?phone=" . get_post_meta($c1->ID, "whats", TRUE) . "'><img src='https://ruteimoveis.com/wp-content/uploads/2018/06/134937.png' width='20' title='" . get_post_meta($c1->ID, "whats", TRUE) . "' alt='" . get_post_meta($c1->ID, "whats", TRUE) . "'></a>";
             $vet[] = array(
-                'ID' => $c1->ID,
-                'data' => $c1->post_date,
-                'nome' => get_post_meta($c1->ID, "nome", TRUE),
-                'email' => get_post_meta($c1->ID, "email", TRUE),
-                'msg' => $c1->post_content,
-                'whats' => get_post_meta($c1->ID, "whats", TRUE),
-                'localizacao' => get_post_meta($c1->ID, "city", TRUE) . " |" . get_post_meta($c1->ID, "regionName", TRUE) . "|" . get_post_meta($c1->ID, "country", TRUE),
-                'imovel' => get_the_title(get_post_meta($c1->ID, "imovelID", TRUE)),
-                'interesse' => '<a href="' . get_post_meta($c1->ID, "link", TRUE) . '" target="_blank">' . $c1->post_title . '</a>',
+            'ID' => $c1->ID,
+            'data' => $c1->post_date,
+            'nome' => get_post_meta($c1->ID, "nome", TRUE),
+            'email' => get_post_meta($c1->ID, "email", TRUE),
+            'msg' => $c1->post_content,
+            'whats' => $whats,
+            'localizacao' => get_post_meta($c1->ID, "city", TRUE) . " |" . get_post_meta($c1->ID, "regionName", TRUE) . "|" . get_post_meta($c1->ID, "country", TRUE),
+            'imovel' => get_the_title(get_post_meta($c1->ID, "imovelID", TRUE)),
+            'interesse' => '<a href="' . get_post_meta($c1->ID, "link", TRUE) . '" target="_blank">' . $c1->post_title . '</a>',
             );
         }
 
@@ -279,6 +281,9 @@ class LeadList extends WP_List_Table {
             //$post_meta = get_post_meta($c1->ID);
             //var_dump($post_meta);
             // var_dump($c1);die;
+
+
+
             $vet[] = array(
                 'ID' => $c1->ID,
                 'data' => $c1->post_date,

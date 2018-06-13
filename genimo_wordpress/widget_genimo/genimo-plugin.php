@@ -190,3 +190,6 @@ add_action( 'admin_menu', 'wp_leads_imobiliarios' );
 function imo_import(){
     include dirname(__FILE__) . '/import.php';
 }
+function leads_imobiliarios(){
+    include dirname(__FILE__) . '/grid.php';
+}
