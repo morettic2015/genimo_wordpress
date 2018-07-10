@@ -3,9 +3,11 @@
  * Template: Single Listing Image
  */
 global $listing;
-?>
 
-<?php if (has_post_thumbnail($listing->ID)) : ?>
+ $the_query = new WP_Query(array("post_type" => "ml-slider", "meta_key" => "_listing_slider", "meta_value" => $listing->ID));
+            $cached = get_the_ID();
+           if(!empty($cached)):
+?>
 
     <meta itemprop="image" content="<?php echo esc_attr(wpsight_listing_thumbnail_url($listing->ID, 'large')); ?>" />
 
@@ -21,9 +23,7 @@ global $listing;
             /**
              * @Meta Key
              */
-            $the_query = new WP_Query(array("post_type" => "ml-slider", "meta_key" => "_listing_slider", "meta_value" => $listing->ID));
-            $cached = get_the_ID();
-            //echo $cached;
+           
             if ($the_query->have_posts()) {
                 $the_query->the_post();
                 $sliderId = get_the_ID();

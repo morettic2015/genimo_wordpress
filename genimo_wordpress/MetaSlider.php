@@ -72,7 +72,7 @@ class MetaSlider {
                 'term_id' => $sliderMeta->sliderTermID, // auto incrementing column
                 'taxonomy' => 'ml-slider',
                 'parent' => 0,
-                'description' => 'Slider do post' . utf8_encode($property->property->nmPropertySite),
+                'description' => 'Slider do post' . ($property->property->nmPropertySite),
                 'count' => $totalImagens
             ));
 

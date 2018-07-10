@@ -10,7 +10,7 @@
 class GenimoWordpress extends stdClass {
 
     public static function adSiteContact() {
-        DB::debugMode();
+        //DB::debugMode();
         echo "<pre>";
         $adSiteContacts = DB::query("select distinct ID from wp_posts where post_type = 'nf_sub'");
         //var_dump($adSiteContacts);
@@ -83,7 +83,7 @@ class GenimoWordpress extends stdClass {
     }
 
     public static function syncSellers($idCompany) {
-        DB::debugMode();
+        //DB::debugMode();
         $date = date("Y-m-d H:i:s");
         // DB::startTransaction();
         echo "<pre>";
@@ -147,22 +147,22 @@ class GenimoWordpress extends stdClass {
      *   @ Recupera todos os eventos apresentados hoje com todas as categorias
      */
     public static function syncProperty($idCompany, $idProperty) {
-        DB::debugMode();
+        //DB::debugMode();
         // DB::startTransaction();
         //echo "<pre>";
         //echo "DAO INIT" . "<br>";
         //Read from url
         $urlProperty = "https://genimo.com.br/api/site/property/" . $idCompany . "/" . $idProperty;
 
-        echo $urlProperty;
+        // echo $urlProperty;
         //Get JSON $yourString );
         $jso1 = getdataFromURL($urlProperty);
         //$jso1 = '{"foo": "bar", "cool": "attr"}';
-        echo $jso1;
+        // echo $jso1;
         //
         // $str = str_replace(array("\r","\n"), "", $jso1);
         //$jso1 = nl2br($str);
-        echo "<pre>";
+        //  echo "<pre>";
         $obj = json_decode(($jso1));
         // var_dump($obj);die;
         // die();
@@ -653,11 +653,11 @@ class GenimoWordpress extends stdClass {
      *      
      */
     public static function copyImages($property) {
-        DB::debugMode();
+       // DB::debugMode();
         //echo $property->idPropertyDB . "\n";
 
         $images = $property->property->images;
-        var_dump($images);
+        //var_dump($images);
 
         $hasSpot = false;
         $imgIds = [];
@@ -672,48 +672,53 @@ class GenimoWordpress extends stdClass {
             $imageNameForLike = str_replace("]", "", $imageNameForLike);
             $pimgId = DB::query("SELECT ID FROM wp_posts where post_type = 'attachment' and guid like '%" . $imageNameForLike . "%'");
             $counter = DB::count();
-            var_dump($pimgId);
-            echo "\n Image Occurences:" . $counter;
-            echo $pimgId['ID'];
+            //var_dump($pimgId);
+            //echo "\n Image Occurences:" . $counter;
+            //echo $pimgId['ID'];
             if ($counter > 0) {
                 ///echo "\n";
                 //echo $img->nmFileName . ' Exists\n';
                 $imgIds[] = $pimgId[0]['ID'];
                 continue;
+            } else {
+
+                $urlImg = $img->dsImagePath . "/" . $img->nmFileName;
+                //  echo $urlImg . "\n";
+
+                $file = file_get_contents($urlImg);
+                $url = REST_MEDIA_URL;
+                $ch = curl_init();
+                $username = 'robogenimo';
+                $password = 'robogenimo2017@';
+
+                curl_setopt($ch, CURLOPT_URL, $url);
+                curl_setopt($ch, CURLOPT_POST, 1);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $file);
+                curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                    'Accept: application/json',
+                    'Content-Disposition: form-data; filename="' . $img->nmFileName . '"',
+                    'Authorization: Basic ' . base64_encode($username . ':' . $password),
+                        //'Content-Type: application/json',
+                        //'Accept: application/json'
+                ]);
+                // $result = null;
+                $result = curl_exec($ch);
+
+                // var_dump($result);
+                curl_close($ch);
+                // echo "\n----------------------------------------";
+                $imagem = json_decode($result);
+
+                //  var_dump($imagem);
+                $imgIds[] = $imagem->id;
             }
-
-            $urlImg = $img->dsImagePath . "/" . $img->nmFileName;
-            //  echo $urlImg . "\n";
-
-            $file = file_get_contents($urlImg);
-            $url = REST_MEDIA_URL;
-            $ch = curl_init();
-            $username = 'robogenimo';
-            $password = 'robogenimo2017@';
-
-            curl_setopt($ch, CURLOPT_URL, $url);
-            curl_setopt($ch, CURLOPT_POST, 1);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $file);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, [
-                'Accept: application/json',
-                'Content-Disposition: form-data; filename="' . $img->nmFileName . '"',
-                'Authorization: Basic ' . base64_encode($username . ':' . $password),
-                    //'Content-Type: application/json',
-                    //'Accept: application/json'
-            ]);
-            $result = null;
-            $result = curl_exec($ch);
-
-            // var_dump($result);
-            curl_close($ch);
-            // echo "\n----------------------------------------";
-            $imagem = json_decode($result);
-
-            //  var_dump($imagem);
-            $imgIds[] = $imagem->id;
         }
+        //Clean empty trash
+        $imgIds = GenimoWordpress::trimArrayFromNull($imgIds);
+        //var_dump($imgIds);
         if (count($imgIds) > 0) {
+
             //Cria a imagem destacada e associa as imagens com o imovel
             GenimoWordpress::insertSpotLight($property->idPropertyDB, $imgIds[0]);
             for ($i = 1; $i < count($imgIds); $i++) {
@@ -725,7 +730,27 @@ class GenimoWordpress extends stdClass {
         }
     }
 
+    /**
+     * @Fix bug from importing missing images
+     */
+    public static function trimArrayFromNull($arr) {
+        $vet = [];
+        foreach ($arr as $key => $val) {
+            if (empty($val)) {
+                continue;
+            }
+            $vet[] = $val;
+        }
+        return $vet;
+    }
+    /**
+     * @Insert spotlight visible only inside admin
+     */
     public static function insertSpotLight($idProperty, $idImg) {
+        //remove old image thumb
+        $query = "delete from wp_postmeta where post_id = $idProperty and meta_key = '_thumbnail_id'";
+        DB::query($query);
+        //Add new one
         DB::insert('wp_postmeta', array(
             'post_id' => $idProperty, //default for all
             'meta_key' => '_thumbnail_id', //Just now its new
