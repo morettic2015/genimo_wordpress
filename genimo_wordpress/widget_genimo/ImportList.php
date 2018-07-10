@@ -17,12 +17,14 @@ class ImportList extends WP_List_Table {
         $columns = array(
             'cb' => '<input type="checkbox" />', // Render a checkbox instead of text.
             'codigo' => "Codigo",
+            'img1' => 'Imagem destaque',
             'mod' => "Modalidade",
             'name' => "Nome do imóvel",
             'locale' => "Localização",
             'last' => "Última atualização",
             'sync' => "Foi importado?",
-            'categ' => "Tipo do imóvel"
+            'categ' => "Tipo do imóvel",
+            
         );
 
         return $columns;
@@ -54,6 +56,7 @@ class ImportList extends WP_List_Table {
             case 'last':
             case 'categ':
             case 'sync':
+            case 'img1':
                 return $item[$column_name];
             default:
                 return print_r($item, true); // Show the whole array for troubleshooting purposes.
@@ -120,7 +123,7 @@ class ImportList extends WP_List_Table {
         /*
          * First, lets decide how many records per page to show
          */
-        $per_page = 15;
+        $per_page = 25;
 
 
         $columns = $this->get_columns();
@@ -134,7 +137,7 @@ class ImportList extends WP_List_Table {
         $this->process_bulk_action();
 
 
-        if (false === ( $vet = get_transient('genimo_wordpress_tmp2') )) {
+        if (false === ( $vet = get_transient('genimo_wordpress_importacao12') )) {
 
             $imoveis = wp_remote_get("https://genimo.com.br/api/site/propertyForPublication/" . IMOB_ID);
             //echo "<pre>";
@@ -143,8 +146,8 @@ class ImportList extends WP_List_Table {
 
 
             foreach ($jsonImoveis as $c1) {
-
-                // var_dump($c1);die;
+                $image = '<a target=BLANK href="https://genimo.com.br/media/'.$c1->idProperty.'/'.$c1->nmFileNameSpotlight.'"><img onerror="this.style.opacity=\'0\'" style="width:80px" src="https://genimo.com.br/media/'.$c1->idProperty.'/'.$c1->nmFileNameSpotlight.'"/></a>';
+                 //var_dump($c1);die;
                 $vet[] = array(
                     'ID' => $c1->idProperty,
                     'codigo' => $c1->cdInternal,
@@ -153,10 +156,11 @@ class ImportList extends WP_List_Table {
                     'name' => $c1->nmPropertySite,
                     'locale' => $c1->nmNeighborhood,
                     'sync' => $this->hasBeenIimported($c1->idProperty),
-                    'last' => $c1->dtLastUpdate
+                    'last' => $c1->dtLastUpdate,
+                    'img1' => $image
                 );
             }
-            set_transient('genimo_wordpress_tmp2', $vet, HOUR_IN_SECONDS / 2);
+            set_transient('genimo_wordpress_tmp2', $vet, HOUR_IN_SECONDS / 3);
         }
         $data = $vet;
 
