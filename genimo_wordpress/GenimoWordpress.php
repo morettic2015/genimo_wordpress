@@ -147,7 +147,7 @@ class GenimoWordpress extends stdClass {
      *   @ Recupera todos os eventos apresentados hoje com todas as categorias
      */
     public static function syncProperty($idCompany, $idProperty) {
-        //DB::debugMode();
+        DB::debugMode();
         // DB::startTransaction();
         //echo "<pre>";
         //echo "DAO INIT" . "<br>";
@@ -244,10 +244,10 @@ class GenimoWordpress extends stdClass {
             $metadata[] = GenimoWordpress::prepareMeta('_price_offer', $typeOfBusiness->tpPriceOffer, $idPropertyDB);
             $metadata[] = GenimoWordpress::prepareMeta('_price_period', $typeOfBusiness->tpPricePeriod, $idPropertyDB);
             $metadata[] = GenimoWordpress::prepareMeta('_price', $typeOfBusiness->vlPrice, $idPropertyDB);
-            $metadata[] = GenimoWordpress::prepareMeta('_map_address', $dsAddressMap, $idPropertyDB);
+            $metadata[] = GenimoWordpress::prepareMeta('_map_address', ($dsAddressMap), $idPropertyDB);
             $metadata[] = GenimoWordpress::prepareMeta('_geolocation_lat', $obj->property->vlLatitude, $idPropertyDB);
             $metadata[] = GenimoWordpress::prepareMeta('_geolocation_long', $obj->property->vlLongitude, $idPropertyDB);
-            $metadata[] = GenimoWordpress::prepareMeta('_geolocation_formatted_address', $dsAddress, $idPropertyDB);
+            $metadata[] = GenimoWordpress::prepareMeta('_geolocation_formatted_address', ($dsAddress), $idPropertyDB);
             $metadata[] = GenimoWordpress::prepareMeta('_geolocation_street', $obj->property->dsAddress, $idPropertyDB);
             $metadata[] = GenimoWordpress::prepareMeta('_geolocation_state_short', $obj->property->sgState, $idPropertyDB);
             $metadata[] = GenimoWordpress::prepareMeta('_geolocation_state_long', $obj->property->nmState, $idPropertyDB);
@@ -311,10 +311,10 @@ class GenimoWordpress extends stdClass {
             GenimoWordpress::updatePostMeta($obj->idPropertyDB, $useOf, '_details_7');
             GenimoWordpress::updatePostMeta($obj->idPropertyDB, $obj->property->qtYearBuilt, '_details_8');
             GenimoWordpress::updatePostMeta($obj->idPropertyDB, GenimoWordpress::getPropertyFloor($obj->property), '_details_9');
-            GenimoWordpress::updatePostMeta($obj->idPropertyDB, $dsAddressMap, '_map_address');
+            GenimoWordpress::updatePostMeta($obj->idPropertyDB, ($dsAddressMap), '_map_address');
             GenimoWordpress::updatePostMeta($obj->idPropertyDB, $obj->property->vlLatitude, '_geolocation_lat');
             GenimoWordpress::updatePostMeta($obj->idPropertyDB, $obj->property->vlLongitude, '_geolocation_long');
-            GenimoWordpress::updatePostMeta($obj->idPropertyDB, $dsAddress, '_geolocation_formatted_address');
+            GenimoWordpress::updatePostMeta($obj->idPropertyDB, ($dsAddress), '_geolocation_formatted_address');
             GenimoWordpress::updatePostMeta($obj->idPropertyDB, $obj->property->dsAddress, '_geolocation_street');
             GenimoWordpress::updatePostMeta($obj->idPropertyDB, $obj->property->sgState, '_geolocation_state_short');
             GenimoWordpress::updatePostMeta($obj->idPropertyDB, $obj->property->nmState, '_geolocation_state_long');
@@ -620,10 +620,10 @@ class GenimoWordpress extends stdClass {
       @Get Map locations
      */
     public static function getMapAddress($dsAddress) {
-        $dsAddressMap = str_replace(".", "", $dsAddress);
+        /*$dsAddressMap = str_replace(".", "", $dsAddress);
         $dsAddressMap = str_replace(",", "", $dsAddressMap);
-        $dsAddressMap = str_replace("-", "", $dsAddressMap);
-        return ($dsAddressMap);
+        $dsAddressMap = str_replace("-", "", $dsAddressMap);*/
+        return ($dsAddress);
     }
 
     /**
@@ -764,7 +764,16 @@ class GenimoWordpress extends stdClass {
       @Get address formated
      */
     public static function getAddress($property) {
-        return utf8_decode($property->nmNeighborhood . ", " . $property->nmCity . " - " . $property->sgState);
+        $original = $property->nmNeighborhood . ", " . $property->nmCity . " - " . $property->sgState;
+       // echo mb_check_encoding($original);die;
+       /* echo "-----------------------------\n";
+        echo $original;
+         echo "-----------------------------\n";
+        echo utf8_encode($original);
+         echo "-----------------------------\n";
+        echo utf8_decode($original);
+        echo "-----------------------------\n";*/
+        return $original;
     }
 
     /**
@@ -846,7 +855,8 @@ class GenimoWordpress extends stdClass {
     public static function getTypeOfBusiness($property) {
         $typeOfBusiness = new stdClass();
         //var_dump($property);die;
-        switch ($property->cdMode) {
+        $tpOffer = intval($property->cdMode);
+        switch ($tpOffer) {
             case 1:
                 $typeOfBusiness->vlPrice = $property->vlRental;
                 $typeOfBusiness->tpPriceOffer = "rent";
@@ -867,7 +877,7 @@ class GenimoWordpress extends stdClass {
                 $typeOfBusiness->tpPriceOffer = "rent";
                 $typeOfBusiness->tpPricePeriod = "rental_period_3";
             default:
-                $typeOfBusiness->vlPrice = "";
+                $typeOfBusiness->vlPrice = $property->vlSale;
                 $typeOfBusiness->tpPriceOffer = "sale";
                 $typeOfBusiness->tpPricePeriod = "sale";
                 break;

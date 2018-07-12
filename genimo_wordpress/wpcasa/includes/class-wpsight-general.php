@@ -1,5 +1,5 @@
 <?php
-
+//"C:\Users\Morettic LTDA\Documents\GitHub\genimo_wordpress\genimo_wordpress\wpcasa\includes\class-wpsight-general.php"
 // Exit if accessed directly
 if (!defined('ABSPATH'))
     exit;
@@ -144,8 +144,9 @@ class WPSight_General {
             ),
             'price' => array(
                 'id' => 'price',
-                'label' => __('Venda', 'wpcasa'),
-                'unit' => '',
+                //'label' => __('Preço', 'wpcasa'),
+                'label' => 'Preço',
+                'unit' => 'r2',
                 'data' => false,
                 'description' => '',
                 'query_var' => 'price',
@@ -154,26 +155,26 @@ class WPSight_General {
                 'dashboard' => true,
                 'position' => 100
             ),
-             'vl_rent' => array(
+            /* 'vl_rent' => array(
                 'id' => 'vl_rent',
                 'label' => __('Aluguel', 'wpcasa'),
                 'unit' => '',
                 'data' => false,
                 'description' => '',
                 'query_var' => 'vl_rent',
-                'data_compare' => 'LIKE',
+                'data_compare' => '=',
                 'data_type' => 'CHAR',
                 'dashboard' => true,
                 'position' => 110
-            ),
-            'vl_season_rent' => array(
+            ),*/
+          /*  'vl_season_rent' => array(
                 'id' => 'vl_season_rent',
                 'label' => __('Aluguel Temporada', 'wpcasa'),
                 'unit' => '',
                 'data' => false,
                 'description' => '',
                 'query_var' => 'vl_season_rent',
-                'data_compare' => 'LIKE',
+                'data_compare' => '=',
                 'data_type' => 'CHAR',
                 'dashboard' => true,
                 'position' => 120
@@ -185,23 +186,23 @@ class WPSight_General {
                 'data' => false,
                 'description' => '',
                 'query_var' => 'vl_season_rent',
-                'data_compare' => 'LIKE',
+                'data_compare' => '=',
                 'data_type' => 'CHAR',
                 'dashboard' => true,
                 'position' => 130
-            ),
-             'vl_low_season_rent' => array(
+            ),*/
+            /* 'vl_low_season_rent' => array(
                 'id' => 'vl_low_season_rent',
                 'label' => __('Aluguel Baixa Temporada', 'wpcasa'),
                 'unit' => '',
                 'data' => false,
                 'description' => '',
                 'query_var' => 'vl_season_rent',
-                'data_compare' => 'LIKE',
+                'data_compare' => '=',
                 'data_type' => 'CHAR',
                 'dashboard' => true,
                 'position' => 140
-            )
+            )*/
         );
 
         // Apply filter to array
