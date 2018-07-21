@@ -137,12 +137,12 @@ class ImportList extends WP_List_Table {
         $this->process_bulk_action();
 
 
-        if (false === ( $vet = get_transient('genimo_wordpress_importacao12') )) {
+        if (false === ( $vet = get_transient('genimo_wordpress_importacao132') )) {
 
             $imoveis = wp_remote_get("https://genimo.com.br/api/site/propertyForPublication/" . IMOB_ID);
             //echo "<pre>";
             $jsonImoveis = json_decode($imoveis['body']);
-            // var_dump($jsonImoveis);die;
+             var_dump($jsonImoveis);die;
 
 
             foreach ($jsonImoveis as $c1) {

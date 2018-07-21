@@ -112,7 +112,7 @@ class GenimoWordpress extends stdClass {
                 'post_content' => utf8_decode($row->dsEmail), //Get as String UTF 8
                 'post_title' => utf8_decode($row->nmPerson), //Get as String UTF 8
                 'post_name' => makeSlug($row->nmPerson . '_' . $row->dsEmail), //Get as String UTF 8
-                'post_excerpt' => utf8_decode($row->dsEmail), //Default Empty
+                'post_excerpt' => htmlentities($row->dsEmail), //Default Empty
                 'post_status' => 'publish', //Publish online / Trash offline
                 'comment_status' => 'closed', //Comment closed for all default
                 'ping_status' => 'closed', //Ping status closed default for all
@@ -206,7 +206,7 @@ class GenimoWordpress extends stdClass {
                 'post_content' => utf8_decode($obj->property->dsPropertySite), //Get as String UTF 8
                 'post_title' => utf8_decode($postTitle), //Get as String UTF 8
                 'post_name' => makeSlug($postTitle . '_' . $idProperty), //Get as String UTF 8
-                'post_excerpt' => utf8_decode($obj->property->nmPropertySite), //Default Empty
+                'post_excerpt' => htmlentities($obj->property->nmPropertySite), //Default Empty
                 'post_status' => 'publish', //Publish online / Trash offline
                 'comment_status' => 'closed', //Comment closed for all default
                 'ping_status' => 'closed', //Ping status closed default for all
@@ -620,9 +620,9 @@ class GenimoWordpress extends stdClass {
       @Get Map locations
      */
     public static function getMapAddress($dsAddress) {
-        /*$dsAddressMap = str_replace(".", "", $dsAddress);
-        $dsAddressMap = str_replace(",", "", $dsAddressMap);
-        $dsAddressMap = str_replace("-", "", $dsAddressMap);*/
+        /* $dsAddressMap = str_replace(".", "", $dsAddress);
+          $dsAddressMap = str_replace(",", "", $dsAddressMap);
+          $dsAddressMap = str_replace("-", "", $dsAddressMap); */
         return ($dsAddress);
     }
 
@@ -653,7 +653,7 @@ class GenimoWordpress extends stdClass {
      *      
      */
     public static function copyImages($property) {
-       // DB::debugMode();
+        // DB::debugMode();
         //echo $property->idPropertyDB . "\n";
 
         $images = $property->property->images;
@@ -743,6 +743,7 @@ class GenimoWordpress extends stdClass {
         }
         return $vet;
     }
+
     /**
      * @Insert spotlight visible only inside admin
      */
@@ -764,16 +765,10 @@ class GenimoWordpress extends stdClass {
       @Get address formated
      */
     public static function getAddress($property) {
+        // var_dump($property);
         $original = $property->nmNeighborhood . ", " . $property->nmCity . " - " . $property->sgState;
-       // echo mb_check_encoding($original);die;
-       /* echo "-----------------------------\n";
-        echo $original;
-         echo "-----------------------------\n";
-        echo utf8_encode($original);
-         echo "-----------------------------\n";
-        echo utf8_decode($original);
-        echo "-----------------------------\n";*/
-        return $original;
+        $html = htmlentities($original);
+        return $html;
     }
 
     /**
