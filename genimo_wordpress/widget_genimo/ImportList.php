@@ -142,7 +142,7 @@ class ImportList extends WP_List_Table {
             $imoveis = wp_remote_get("https://genimo.com.br/api/site/propertyForPublication/" . IMOB_ID);
             //echo "<pre>";
             $jsonImoveis = json_decode($imoveis['body']);
-             var_dump($jsonImoveis);die;
+          //   var_dump($jsonImoveis);die;
 
 
             foreach ($jsonImoveis as $c1) {
@@ -154,7 +154,7 @@ class ImportList extends WP_List_Table {
                     'mod' => $this->getMode($c1->cdMode),
                     'categ' => $this->getCategory($c1->idCategory),
                     'name' => $c1->nmPropertySite,
-                    'locale' => $c1->nmNeighborhood,
+                    'locale' => $c1->nmNeighborhood. '/'.$c1->dsAddress2,
                     'sync' => $this->hasBeenIimported($c1->idProperty),
                     'last' => $c1->dtLastUpdate,
                     'img1' => $image

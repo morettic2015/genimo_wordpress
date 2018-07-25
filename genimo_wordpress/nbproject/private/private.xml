@@ -3,22 +3,30 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Morettic%20LTDA/Documents/GitHub/genimo_wordpress/genimo_wordpress/wpcasa/templates/listing-single-info.php</file>
-            <file>file:/C:/Users/Morettic%20LTDA/Documents/GitHub/genimo_wordpress/genimo_wordpress/wpcasa/languages/wpcasa.pot</file>
-            <file>file:/C:/Users/Morettic%20LTDA/Documents/GitHub/genimo_wordpress/genimo_wordpress/wpcasa/templates/listing-single-location.php</file>
-            <file>file:/C:/Users/Morettic%20LTDA/Documents/GitHub/genimo_wordpress/genimo_wordpress/wpcasa/functions/wpsight-template.php</file>
-            <file>file:/C:/Users/Morettic%20LTDA/Documents/GitHub/genimo_wordpress/genimo_wordpress/wpcasa/includes/class-wpsight-general.php</file>
-            <file>file:/C:/Users/Morettic%20LTDA/Documents/GitHub/genimo_wordpress/genimo_wordpress/wpcasa/functions/wpsight-general.php</file>
-            <file>file:/C:/Users/Morettic%20LTDA/Documents/GitHub/genimo_wordpress/genimo_wordpress/wpcasa/templates/listing-single-details.php</file>
-            <file>file:/C:/Users/Morettic%20LTDA/Documents/GitHub/genimo_wordpress/genimo_wordpress/wpcasa/includes/class-wpsight-listings.php</file>
-            <file>file:/C:/Users/Morettic%20LTDA/Documents/GitHub/genimo_wordpress/genimo_wordpress/index.php</file>
-            <file>file:/C:/Users/Morettic%20LTDA/Documents/GitHub/genimo_wordpress/genimo_wordpress/wpcasa/templates/listing-single-after.php</file>
+            <file>file:/C:/Users/Morettic%20LTDA/Documents/GitHub/genimo_wordpress/genimo_wordpress/wpcasa/templates/listing-single-comments.php</file>
             <file>file:/C:/Users/Morettic%20LTDA/Documents/GitHub/genimo_wordpress/genimo_wordpress/MetaSlider.php</file>
-            <file>file:/C:/Users/Morettic%20LTDA/Documents/GitHub/genimo_wordpress/genimo_wordpress/wpcasa/templates/listing-single-features.php</file>
-            <file>file:/C:/Users/Morettic%20LTDA/Documents/GitHub/genimo_wordpress/genimo_wordpress/wpcasa/templates/listing-single-image.php</file>
-            <file>file:/C:/Users/Morettic%20LTDA/Documents/GitHub/genimo_wordpress/genimo_wordpress/GenimoWordpress.php</file>
-            <file>file:/C:/Users/Morettic%20LTDA/Documents/GitHub/genimo_wordpress/genimo_wordpress/wpcasa/templates/listing-single-before.php</file>
             <file>file:/C:/Users/Morettic%20LTDA/Documents/GitHub/genimo_wordpress/genimo_wordpress/widget_genimo/ImportList.php</file>
+            <file>file:/C:/Users/Morettic%20LTDA/Documents/GitHub/genimo_wordpress/genimo_wordpress/GenimoWordpress.php</file>
+            <file>file:/C:/Users/Morettic%20LTDA/Documents/GitHub/genimo_wordpress/genimo_wordpress/index.php</file>
+            <file>file:/C:/Users/Morettic%20LTDA/Documents/GitHub/genimo_wordpress/genimo_wordpress/wpcasa/functions/wpsight-general.php</file>
+            <file>file:/C:/Users/Morettic%20LTDA/Documents/GitHub/genimo_wordpress/genimo_wordpress/wpcasa/templates/listing-single-before.php</file>
+            <file>file:/C:/Users/Morettic%20LTDA/Documents/GitHub/genimo_wordpress/genimo_wordpress/wpcasa/templates/listing-archive-description.php</file>
+            <file>file:/C:/Users/Morettic%20LTDA/Documents/GitHub/genimo_wordpress/genimo_wordpress/wpcasa/templates/listing-single-title.php</file>
+            <file>file:/C:/Users/Morettic%20LTDA/Documents/GitHub/genimo_wordpress/genimo_wordpress/wpcasa/templates/listing-single-description.php</file>
+            <file>file:/C:/Users/Morettic%20LTDA/Documents/GitHub/genimo_wordpress/genimo_wordpress/wpcasa/languages/wpcasa.pot</file>
+            <file>file:/C:/Users/Morettic%20LTDA/Documents/GitHub/genimo_wordpress/genimo_wordpress/wpcasa/functions/wpsight-meta-boxes.php</file>
+            <file>file:/C:/Users/Morettic%20LTDA/Documents/GitHub/genimo_wordpress/genimo_wordpress/wpcasa/includes/class-wpsight-general.php</file>
+            <file>file:/C:/Users/Morettic%20LTDA/Documents/GitHub/genimo_wordpress/genimo_wordpress/wpcasa/functions/wpsight-helpers.php</file>
+            <file>file:/C:/Users/Morettic%20LTDA/Documents/GitHub/genimo_wordpress/genimo_wordpress/wpcasa/functions/wpsight-listings.php</file>
+            <file>file:/C:/Users/Morettic%20LTDA/Documents/GitHub/genimo_wordpress/genimo_wordpress/wpcasa/functions/wpsight-agents.php</file>
+            <file>file:/C:/Users/Morettic%20LTDA/Documents/GitHub/genimo_wordpress/genimo_wordpress/wpcasa/functions/wpsight-template.php</file>
+            <file>file:/C:/Users/Morettic%20LTDA/Documents/GitHub/genimo_wordpress/genimo_wordpress/wpcasa/templates/listing-single-agent.php</file>
+            <file>file:/C:/Users/Morettic%20LTDA/Documents/GitHub/genimo_wordpress/genimo_wordpress/wpcasa/templates/listing-single-location.php</file>
+            <file>file:/C:/Users/Morettic%20LTDA/Documents/GitHub/genimo_wordpress/genimo_wordpress/wpcasa/includes/class-wpsight-listings.php</file>
+            <file>file:/C:/Users/Morettic%20LTDA/Documents/GitHub/genimo_wordpress/genimo_wordpress/wpcasa/templates/listing-single-after.php</file>
+            <file>file:/C:/Users/Morettic%20LTDA/Documents/GitHub/genimo_wordpress/genimo_wordpress/wpcasa/templates/listing-single-image.php</file>
+            <file>file:/C:/Users/Morettic%20LTDA/Documents/GitHub/genimo_wordpress/genimo_wordpress/wpcasa/templates/listing-single-details.php</file>
+            <file>file:/C:/Users/Morettic%20LTDA/Documents/GitHub/genimo_wordpress/genimo_wordpress/wpcasa/templates/listing-single-features.php</file>
         </group>
     </open-files>
 </project-private>
