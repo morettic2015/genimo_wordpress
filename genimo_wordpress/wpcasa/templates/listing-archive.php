@@ -6,7 +6,7 @@
 
         <?php do_action('wpsight_listing_archive_before', $post); ?>
 
-        <div class="wpsight-listing-left">
+        <div class="wpsight-listing-left" style="margin-left:5px !important">
 
             <?php wpsight_get_template('listing-archive-image.php'); ?>
 

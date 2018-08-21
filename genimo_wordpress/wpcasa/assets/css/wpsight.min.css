@@ -268,7 +268,7 @@
 .wpsight-listings .wpsight-listing-left,
 .wpsight-listing-sc .wpsight-listing-left {
     float: left;
-    margin-right: 30px;
+    margin-right: 15px;
     width: auto;
 }
 
@@ -350,6 +350,7 @@
 .wpsight-listing-title {
     border-bottom: 4px double #ededed;
     margin-bottom: 30px;
+    margin-left:3px;
     padding: 0 0 15px;
 }
 
@@ -393,7 +394,7 @@
 ================================================== */
 
 .wpsight-listing-details {
-    margin-right: -5%;
+    margin-right: 5%;
 }
 
 .wpsight-listing-details .listing-details-detail {
@@ -562,7 +563,7 @@
 
 }
 
-/* Listing Teaser (horizontal)
+/* Listing Teaser (horizontal) C:\Users\Morettic LTDA\Documents\GitHub\genimo_wordpress\genimo_wordpress\wpcasa\assets\css\wpsight.min.css
 ================================================== */
 
 .wpsight-listing-teaser {
@@ -578,12 +579,13 @@
 
 .wpsight-listing-teaser .wpsight-listing-left {
     float: left;
-    margin-right: 20px;
+    margin-right: 15px;
     width: auto;
 }
 
 .wpsight-listing-teaser .wpsight-listing-right {
     overflow: hidden;
+    margin-left: 10px;
 }
 
 .wpsight-listing-teaser .wpsight-listing-title {

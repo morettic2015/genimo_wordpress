@@ -155,7 +155,7 @@ class WPSight_General {
                 'dashboard' => true,
                 'position' => 100
             ),
-            /* 'vl_rent' => array(
+            'vl_rent' => array(
                 'id' => 'vl_rent',
                 'label' => __('Aluguel', 'wpcasa'),
                 'unit' => '',
@@ -166,8 +166,8 @@ class WPSight_General {
                 'data_type' => 'CHAR',
                 'dashboard' => true,
                 'position' => 110
-            ),*/
-          /*  'vl_season_rent' => array(
+            ),
+            'vl_season_rent' => array(
                 'id' => 'vl_season_rent',
                 'label' => __('Aluguel Temporada', 'wpcasa'),
                 'unit' => '',
@@ -190,8 +190,8 @@ class WPSight_General {
                 'data_type' => 'CHAR',
                 'dashboard' => true,
                 'position' => 130
-            ),*/
-            /* 'vl_low_season_rent' => array(
+            ),
+             'vl_low_season_rent' => array(
                 'id' => 'vl_low_season_rent',
                 'label' => __('Aluguel Baixa Temporada', 'wpcasa'),
                 'unit' => '',
@@ -202,7 +202,7 @@ class WPSight_General {
                 'data_type' => 'CHAR',
                 'dashboard' => true,
                 'position' => 140
-            )*/
+            )
         );
 
         // Apply filter to array
@@ -353,9 +353,9 @@ class WPSight_General {
         $offers = array(
             'sale' => __('Venda', 'wpcasa'),
             'rent' => __('Aluguel', 'wpcasa'),
-            'rent_1' => __('Aluguel Temporada', 'wpcasa'),
+           /* 'rent_1' => __('Aluguel Temporada', 'wpcasa'),
             'rent_2' => __('Aluguel Estudante', 'wpcasa'),
-            'tmp' => __('Temporada', 'wpcasa')
+            'tmp' => __('Temporada', 'wpcasa')*/
         );
 
         return apply_filters('wpsight_offers', $offers);

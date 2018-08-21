@@ -12,7 +12,7 @@
 
 		</div>
 		
-		<div class="wpsight-listing-right">
+		<div class="wpsight-listing-right" style="margin-left:5px !important">
 		
 			<?php wpsight_get_template( 'listing-archive-title.php' ); ?>
 			

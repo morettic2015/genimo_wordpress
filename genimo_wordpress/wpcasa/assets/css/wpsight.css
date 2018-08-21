@@ -584,6 +584,7 @@
 
 .wpsight-listing-teaser .wpsight-listing-right {
     overflow: hidden;
+    margin-left: 5px;
 }
 
 .wpsight-listing-teaser .wpsight-listing-title {

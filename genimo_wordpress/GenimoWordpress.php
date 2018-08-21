@@ -766,7 +766,7 @@ class GenimoWordpress extends stdClass {
      */
     public static function getAddress($property) {
         // var_dump($property);
-        $original = $property->nmNeighborhood . ", " . $property->nmCity . " - " . $property->sgState;
+        $original = $property->nmNeighborhood . ", " . $property->nmCity . " - " . $property->sgState . ", " . $property->dsAddress. ", " . $property->dsAddress2; 
         $html = htmlentities($original);
         return $html;
     }
@@ -855,7 +855,7 @@ class GenimoWordpress extends stdClass {
             case 1:
                 $typeOfBusiness->vlPrice = $property->vlRental;
                 $typeOfBusiness->tpPriceOffer = "rent";
-                $typeOfBusiness->tpPricePeriod = "rental_period_1";
+                $typeOfBusiness->tpPricePeriod = "rental_period_3";
                 break;
             case 2:
                 $typeOfBusiness->vlPrice = $property->vlSale;
@@ -865,7 +865,7 @@ class GenimoWordpress extends stdClass {
             case 4:
                 $typeOfBusiness->vlPrice = $property->vlSeasonRent;
                 $typeOfBusiness->tpPriceOffer = "rent";
-                $typeOfBusiness->tpPricePeriod = "rental_period_2";
+                $typeOfBusiness->tpPricePeriod = "rental_period_3";
                 break;
             case 5:
                 $typeOfBusiness->typeOfBusiness->vlPrice = $property->vlLowSeasonRent;
