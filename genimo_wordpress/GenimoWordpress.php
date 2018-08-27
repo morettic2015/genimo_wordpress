@@ -264,7 +264,7 @@ class GenimoWordpress extends stdClass {
             $metadata[] = GenimoWordpress::prepareMeta('_details_8', $obj->property->qtYearBuilt, $idPropertyDB);
             $metadata[] = GenimoWordpress::prepareMeta('_details_9', GenimoWordpress::getPropertyFloor($obj->property), $idPropertyDB);
             $metadata[] = GenimoWordpress::prepareMeta('_vl_low_season_rent', $obj->property->vlLowSeasonRent, $idPropertyDB);
-            $metadata[] = GenimoWordpress::prepareMeta('_vl_rent', $obj->property->vlRental, $idPropertyDB);
+           // $metadata[] = GenimoWordpress::prepareMeta('_vl_rent', $obj->property->vlRental, $idPropertyDB);
             $metadata[] = GenimoWordpress::prepareMeta('_vl_season_rent', $obj->property->vlSeasonRent, $idPropertyDB);
             //Insert post id meta
             //  var_dump($obj->property);
@@ -319,7 +319,7 @@ class GenimoWordpress extends stdClass {
             GenimoWordpress::updatePostMeta($obj->idPropertyDB, $obj->property->sgState, '_geolocation_state_short');
             GenimoWordpress::updatePostMeta($obj->idPropertyDB, $obj->property->nmState, '_geolocation_state_long');
             GenimoWordpress::updatePostMeta($obj->idPropertyDB, $obj->property->vlLowSeasonRent, '_vl_low_season_rent');
-            GenimoWordpress::updatePostMeta($obj->idPropertyDB, $obj->property->vlRental, '_vl_rent');
+            //GenimoWordpress::updatePostMeta($obj->idPropertyDB, $obj->property->vlRental, '_vl_rent');
             GenimoWordpress::updatePostMeta($obj->idPropertyDB, $obj->property->vlSeasonRent, '_vl_season_rent');
 
             //  var_dump($obj->property);
