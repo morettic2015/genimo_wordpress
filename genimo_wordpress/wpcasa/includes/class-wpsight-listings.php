@@ -1018,14 +1018,17 @@ class WPSight_Listings {
 
                 // Optionally add currency symbol
 
-                if ($args['show_currency'] == true)
-                    $listing_price_symbol .= '<span class="listing-price-symbol">' . wpsight_get_currency() . '</span><!-- .listing-price-symbol -->';
+                if ($args['show_currency'] == true){
+                  //  $listing_price_symbol .= '<span class="listing-price-symbol">' . wpsight_get_currency() . '</span><!-- .listing-price-symbol -->';
+                      $listing_price_symbol .= '<span class="listing-price-symbol">R$</span><!-- .listing-price-symbol -->';
+                }
             } else {
 
                 // Optionally add currency symbol
 
                 if ($args['show_currency'] == true)
-                    $listing_price_symbol = '<span class="listing-price-symbol">' . wpsight_get_currency() . '</span><!-- .listing-price-symbol -->';
+                    $listing_price_symbol = '<span class="listing-price-symbol">R$</span><!-- .listing-price-symbol -->';
+//                    $listing_price_symbol = '<span class="listing-price-symbol">' . wpsight_get_currency() . '</span><!-- .listing-price-symbol -->';
 
                 $listing_price_symbol .= '<span class="listing-price-value" itemprop="price" content="' . esc_attr(wpsight_get_listing_price_raw($post_id)) . '">' . $listing_price . '</span><!-- .listing-price-value -->';
             } // endif $currency_symbol
