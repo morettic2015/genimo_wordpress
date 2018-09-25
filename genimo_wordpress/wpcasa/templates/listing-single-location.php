@@ -9,6 +9,18 @@ $long = get_post_meta($listing->ID, '_geolocation_long', true);
 
 $hide = get_post_meta($listing->ID, '_map_hide', true);
 
+if (!$hide) {//Hide map
+    ?>
+    <!--<div class="wpsight-listing-description" itemprop="description">
+        <?php
+        echo get_post_meta($listing->ID, '_map_address', true);
+
+//echo apply_filters( 'wpsight_listing_description', wpsight_format_content( $listing->post_content ) ); 
+        ?>
+    </div>-->
+    <?php
+}
+
 if ($lat && $long && !$hide) {
     ?>
 
@@ -74,12 +86,12 @@ if ($lat && $long && !$hide) {
             }
 
             google.maps.event.addDomListener(window, 'load', initialize);
-          
+
         </script>
 
         <div itemprop="availableAtOrFrom" itemscope itemtype="http://schema.org/Place">
 
-            <?php do_action('wpsight_listing_single_location_before', $listing->ID); ?>
+    <?php do_action('wpsight_listing_single_location_before', $listing->ID); ?>
 
             <div class="wpsight-listing-location" itemprop="geo" itemscope itemtype="http://schema.org/GeoCoordinates">
 
@@ -88,15 +100,15 @@ if ($lat && $long && !$hide) {
                 <meta itemprop="latitude" content="<?php echo $lat; ?>" />
                 <meta itemprop="longitude" content="<?php echo $long; ?>" />
 
-                <?php if (!empty($listing->_map_note)) : ?>
+                    <?php if (!empty($listing->_map_note)) : ?>
                     <div class="wpsight-listing-location-note">
-                        <?php echo wp_kses_post($listing->_map_note); ?>
+                    <?php echo wp_kses_post($listing->_map_note); ?>
                     </div>
-                <?php endif; ?>
+    <?php endif; ?>
 
             </div>
 
-            <?php do_action('wpsight_listing_single_location_after', $listing->ID); ?>
+    <?php do_action('wpsight_listing_single_location_after', $listing->ID); ?>
 
         </div>
         <p>
