@@ -264,7 +264,7 @@ class GenimoWordpress extends stdClass {
             $metadata[] = GenimoWordpress::prepareMeta('_details_8', $obj->property->qtYearBuilt, $idPropertyDB);
             $metadata[] = GenimoWordpress::prepareMeta('_details_9', GenimoWordpress::getPropertyFloor($obj->property), $idPropertyDB);
             $metadata[] = GenimoWordpress::prepareMeta('_vl_low_season_rent', $obj->property->vlLowSeasonRent, $idPropertyDB);
-           // $metadata[] = GenimoWordpress::prepareMeta('_vl_rent', $obj->property->vlRental, $idPropertyDB);
+            // $metadata[] = GenimoWordpress::prepareMeta('_vl_rent', $obj->property->vlRental, $idPropertyDB);
             $metadata[] = GenimoWordpress::prepareMeta('_vl_season_rent', $obj->property->vlSeasonRent, $idPropertyDB);
             //Insert post id meta
             //  var_dump($obj->property);
@@ -676,6 +676,11 @@ class GenimoWordpress extends stdClass {
             //echo "\n Image Occurences:" . $counter;
             //echo $pimgId['ID'];
             if ($counter > 0) {
+
+
+                if ($img->flSpotlight > 0) {
+                    GenimoWordpress::insertSpotLight($property->idPropertyDB, $pimgId[0]['ID']);
+                }
                 ///echo "\n";
                 //echo $img->nmFileName . ' Exists\n';
                 $imgIds[] = $pimgId[0]['ID'];
@@ -712,6 +717,9 @@ class GenimoWordpress extends stdClass {
 
                 //  var_dump($imagem);
                 $imgIds[] = $imagem->id;
+                if ($img->flSpotlight > 0) {
+                    GenimoWordpress::insertSpotLight($property->idPropertyDB, $imgIds[] = $imagem->id);
+                }
             }
         }
         //Clean empty trash
@@ -766,7 +774,7 @@ class GenimoWordpress extends stdClass {
      */
     public static function getAddress($property) {
         // var_dump($property);
-        $original = $property->nmNeighborhood . ", " . $property->nmCity . " - " . $property->sgState . ", " . $property->dsAddress. ", " . $property->dsAddress2; 
+        $original = $property->nmNeighborhood . ", " . $property->nmCity . " - " . $property->sgState . ", " . $property->dsAddress . ", " . $property->dsAddress2;
         $html = htmlentities($original);
         return $html;
     }
