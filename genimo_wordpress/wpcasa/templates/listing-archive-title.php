@@ -5,7 +5,10 @@
         global $wpdb;
         $post = get_post();
         $query = "SELECT meta_value from wp_postmeta where meta_key='_listing_id' and post_id = ".$post->ID;
-        $code = $wpdb->get_var($query);
+        $query2 = "SELECT meta_value from wp_postmeta where meta_key='_cd_internal_' and post_id = ".$post->ID;
+        $code1 = $wpdb->get_var($query);
+        $code2 = $wpdb->get_var($query2);
+        $code = empty($code2)?$code1:$code2;
     
 ?>-->
 	<div class="wpsight-listing-title">

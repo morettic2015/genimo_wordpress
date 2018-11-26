@@ -234,6 +234,7 @@ class GenimoWordpress extends stdClass {
 
             //prepareMeta post meta id for future update
             $metadata[] = GenimoWordpress::prepareMeta('_listing_id', $idProperty, $idPropertyDB);
+            $metadata[] = GenimoWordpress::prepareMeta('_cd_internal_', $obj->property->cdInternal, $idPropertyDB);
             $metadata[] = GenimoWordpress::prepareMeta('_listing_not_available', 0, $idPropertyDB);
             $metadata[] = GenimoWordpress::prepareMeta('_listing_sticky', 0, $idPropertyDB);
             $metadata[] = GenimoWordpress::prepareMeta('_listing_featured', 0, $idPropertyDB);
