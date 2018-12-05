@@ -40,7 +40,8 @@ $app->get('/property/{idCompany}/{idProperty}', function (Request $request, Resp
 $app->get('/remove/{idCompany}/{idProperty}', function (Request $request, Response $response) use ($app) {
     $idProperty = $request->getAttribute('idProperty');
     $idCompany = $request->getAttribute('idCompany');
-    });
+    GenimoWordpress::removeListingFromWP($idProperty);
+});
 $app->get('/sellers/{idCompany}', function (Request $request, Response $response) use ($app) {
     $idCompany = $request->getAttribute('idCompany');
     //echo "INIT IMPORT DATA FROM PROPERTY" . $idProperty . "<br>";

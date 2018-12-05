@@ -627,6 +627,26 @@ class GenimoWordpress extends stdClass {
         return ($dsAddress);
     }
 
+    public static final function removeListingFromWP($id) {
+        $query = "select post_id from wp_postmeta where meta_value = $id and meta_key ='_listing_id'";
+        list($id_real_state) = DB::queryFirstList($query); //GET POST ID
+        if (!empty($id_real_state)) {//REMOVE POST WITH ITS META DATA
+            $q1 = "delete from wp_posts where ID = $id_real_state";
+            DB::query($q1);
+            $q2 = "delete from wp_postmeta where post_id = $id_real_state";
+            DB::query($q2);
+            $query = "select post_id from wp_postmeta where meta_key = '_listing_slider' and meta_value = " . $id_real_state;
+            list($listingSliderID) = DB::queryFirstList($query);
+            //REMOVE META SLIDER
+            if (!empty($listingSliderID)) {
+                $queryDelMeta = "delete from wp_postmeta where post_id = $listingSliderID;";
+                $queryDelPost = "delete from wp_posts where ID = $listingSliderID;";
+                DB::query($queryDelMeta);
+                DB::query($queryDelPost);
+            }
+        }
+    }
+
     /**
      * @ Copy Images
      * 1) Pega uma imagem
