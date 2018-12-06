@@ -10,9 +10,10 @@
 class GenimoWordpress extends stdClass {
 
     public static final function replaceSearch($param) {
+       // $string = $param;
         //$string = str_ireplace(array('\r\n', '\r', '\n'), '<br/>', $param);
-        $string = preg_replace("/[\n\r]/", "", $param);
-        //$string = str_replace(",", ";", $string);
+        $string = str_replace("&nbsp;", "", $param);
+        $string = str_replace("\r\n", "<br>", $param);
         return $string;
     }
 
